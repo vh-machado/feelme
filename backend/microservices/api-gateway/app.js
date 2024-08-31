@@ -1,5 +1,5 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const app = express();
 
 // Middleware para analisar JSON
@@ -22,6 +22,9 @@ app.use('/auth-service', createProxyMiddleware({
     pathRewrite: { '^/auth-service': '' }, // Remove o prefixo /auth-service
     changeOrigin: true, // Atualiza o host da origem
     logger: console, // Nível de log para depuração
+    on: {
+        proxyReq: fixRequestBody,
+    },
     onProxyReq: (proxyReq, req, res) => {
         console.log('Requisição encaminhada para:', 'http://localhost:5001' + req.url);
         console.log('Método:', req.method);
@@ -41,7 +44,7 @@ app.use('/auth-service', createProxyMiddleware({
             statusCode: proxyRes.statusCode,
             headers: proxyRes.headers
         });
-        proxyRes.pipe(res); 
+        proxyRes.pipe(res);
     },
     onError: (err, req, res) => {
         console.error('Erro ao encaminhar requisição:', err.message);
