@@ -4,9 +4,23 @@
       <img :src="item" width="200" height="400" draggable="false">
     </div>
   </UCarousel>
+
+  {{ data }}
 </template>
 
 <script setup lang="ts">
+const config = useRuntimeConfig()
+
+const { data } = await useFetch(`/movie/popular`, {
+  baseURL: config.public.tmdbApiUrl,
+  query: { language: 'en-US', page: '1' },
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${config.public.tmdbApiKey}`
+  }
+})
+
 const items = [
   'https://picsum.photos/600/800?random=1',
   'https://picsum.photos/600/800?random=2',
@@ -16,4 +30,3 @@ const items = [
   'https://picsum.photos/600/800?random=6'
 ]
 </script>
-

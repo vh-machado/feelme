@@ -9,4 +9,10 @@ export default defineNuxtConfig({
     },
     display: 'swap'
   }]],
+  runtimeConfig: {
+    public: {
+      tmdbApiUrl: '',
+      tmdbApiKey: ''
+    }
+  },
 })
