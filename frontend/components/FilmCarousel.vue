@@ -1,32 +1,48 @@
 <template>
-  <UCarousel v-slot="{ item }" :items="items" :ui="{ container: 'gap-4 p-4' }">
-    <div class="p-4 bg-neutral-800 rounded">
-      <img :src="item" width="200" height="400" draggable="false">
-    </div>
-  </UCarousel>
+  <div v-if="pending" class="flex items-center gap-4 p-4">
+    <USkeleton class="w-full h-[345px]" />
+  </div>
 
-  {{ data }}
+  <template v-else>
+    <div class="mx-16">
+      <UCarousel v-slot="{ item }" :items="items" :ui="{ container: 'gap-4 py-8 px-4' }" 
+        arrows
+        :prev-button="{
+          color: 'gray',
+          icon: 'i-mingcute-left-small-line',
+          class: '-left-12'
+        }"
+        :next-button="{
+          color: 'gray',
+          icon: 'i-mingcute-right-small-line',
+          class: '-right-12'
+        }"
+      >
+        <div>
+          <img :src="item" draggable="false"
+            class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
+        </div>
+      </UCarousel>
+    </div>
+  </template>
 </template>
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
 
-const { data } = await useFetch(`/movie/popular`, {
-  baseURL: config.public.tmdbApiUrl,
-  query: { language: 'en-US', page: '1' },
+const { pending } = await useMovieAPI('trending/movie/week', {
   method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${config.public.tmdbApiKey}`
+  query: { language: 'en-US', page: '1' },
+  transform: (data) => {
+    setPosters(data.results)
   }
 })
 
-const items = [
-  'https://picsum.photos/600/800?random=1',
-  'https://picsum.photos/600/800?random=2',
-  'https://picsum.photos/600/800?random=3',
-  'https://picsum.photos/600/800?random=4',
-  'https://picsum.photos/600/800?random=5',
-  'https://picsum.photos/600/800?random=6'
-]
+async function setPosters(movies: any[]) {
+  for (const movie of movies) {
+    items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
+  }
+}
+
+const items = ref([])
 </script>

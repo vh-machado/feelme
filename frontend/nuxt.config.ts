@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   }]],
   runtimeConfig: {
     public: {
-      tmdbApiUrl: '',
+      tmdbApiBaseUrl: '',
+      tmdbImageBaseUrl: '',
       tmdbApiKey: ''
     }
   },
