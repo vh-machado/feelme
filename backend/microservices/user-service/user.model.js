@@ -1,30 +1,28 @@
 const mongoose = require('mongoose');
-
-// Definindo o esquema para a solicitação de folga
-const userSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   nickname: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    match: [/.+\@.+\..+/, 'Por favor, insira um email válido'], // Validação de email
   },
   password: {
     type: String,
-    required: true
+    required: true,
+  },
+  userRole: {
+    type: String,
+    required: true,
+    default: 'user', // Valor padrão para userRole
   }
 });
 
-// Criando o model com base no esquema
-const User = mongoose.model('User', UserSchema);
-
-module.exports = User;
+module.exports = mongoose.model('User', UserSchema);
