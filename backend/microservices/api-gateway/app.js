@@ -1,4 +1,8 @@
+require('dotenv').config();
 const express = require('express');
+const http = require('http')
+const https = require('https')
+const fs = require('fs')
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const app = express();
 
@@ -8,39 +12,10 @@ app.use(express.json());
 
 // Configuração do proxy para o serviço de autenticação
 app.use('/auth-service', createProxyMiddleware({
-    target: 'http://localhost:5001', // URL do serviço de autenticação
+    target: process.env.AUTH_SERVICE_URL, // URL do serviço de autenticação
     pathRewrite: { '^/auth-service': '' }, // Remove o prefixo /auth-service
-    changeOrigin: true, // Atualiza o host da origem
-    logger: console, // Nível de log para depuração
-    on: {
-        proxyReq: fixRequestBody,
-    },
-    onProxyReq: (proxyReq, req, res) => {
-        if (req.body && req.method !== 'GET') {
-            const bodyData = JSON.stringify(req.body);
-            proxyReq.setHeader('Content-Type', 'application/json');
-            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-            proxyReq.write(bodyData);
-            proxyReq.end(); 
-        }
-    },
-    onProxyRes: (proxyRes, req, res) => {
-        console.log('Resposta do Servidor de Destino:', {
-            statusCode: proxyRes.statusCode,
-            headers: proxyRes.headers
-        });
-        proxyRes.pipe(res);
-    },
-    onError: (err, req, res) => {
-        res.status(500).send('Erro ao encaminhar requisição: ' + err.mmessage);
-    },
-}));
-// Configuração do proxy para o serviço de autenticação
-app.use('/user-service', createProxyMiddleware({
-    target: 'http://localhost:5002', // URL do serviço de autenticação
-    pathRewrite: { '^/user-service': '' }, // Remove o prefixo /auth-service
-    changeOrigin: true, // Atualiza o host da origem
-    logger: console, // Nível de log para depuração
+    changeOrigin: true, 
+    logger: console, 
     on: {
         proxyReq: fixRequestBody,
     },
@@ -66,7 +41,21 @@ app.use('/user-service', createProxyMiddleware({
 }));
 
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Servidor da API Gateway iniciado na porta: ${PORT}`);
-});
+
+// Porta do serviço
+const HTTPPORT = process.env.HTTPPORT 
+const HTTPSPORT = process.env.HTTPSPORT 
+
+http.createServer(app).listen(HTTPPORT, () => {
+    console.log(`HTTP Server is running on http://localhost:${HTTPPORT}`)
+  })
+  
+  const credentials = {
+    key: fs.readFileSync('./ssl/private.key'),
+    cert: fs.readFileSync('./ssl/certificate.crt'),
+    bundle: fs.readFileSync('./ssl/ca_bundle.crt')
+  }
+  
+  https.createServer(credentials, app).listen(HTTPSPORT, () => {
+    console.log(`HTTPS Server is running on https://localhost:${HTTPSPORT}`)
+  })
