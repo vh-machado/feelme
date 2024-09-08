@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http')
 const https = require('https')
+const cors = require('cors');
 const fs = require('fs')
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const app = express();
@@ -9,13 +10,20 @@ const app = express();
 // Middleware para analisar JSON
 app.use(express.json());
 
+const corsOptions = {
+    origin: process.env.ORIGIN_FRONT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 // Configuração do proxy para o serviço de autenticação
 app.use('/auth-service', createProxyMiddleware({
     target: process.env.AUTH_SERVICE_URL, // URL do serviço de autenticação
     pathRewrite: { '^/auth-service': '' }, // Remove o prefixo /auth-service
-    changeOrigin: true, 
-    logger: console, 
+    changeOrigin: true,
+    logger: console,
     on: {
         proxyReq: fixRequestBody,
     },
@@ -25,7 +33,7 @@ app.use('/auth-service', createProxyMiddleware({
             proxyReq.setHeader('Content-Type', 'application/json');
             proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
             proxyReq.write(bodyData);
-            proxyReq.end(); 
+            proxyReq.end();
         }
     },
     onProxyRes: (proxyRes, req, res) => {
@@ -43,19 +51,19 @@ app.use('/auth-service', createProxyMiddleware({
 
 
 // Porta do serviço
-const HTTPPORT = process.env.HTTPPORT 
-const HTTPSPORT = process.env.HTTPSPORT 
+const HTTPPORT = process.env.HTTPPORT
+const HTTPSPORT = process.env.HTTPSPORT
 
 http.createServer(app).listen(HTTPPORT, () => {
     console.log(`HTTP Server is running on http://localhost:${HTTPPORT}`)
-  })
-  
-  const credentials = {
+})
+
+const credentials = {
     key: fs.readFileSync('./ssl/private.key'),
     cert: fs.readFileSync('./ssl/certificate.crt'),
     bundle: fs.readFileSync('./ssl/ca_bundle.crt')
-  }
-  
-  https.createServer(credentials, app).listen(HTTPSPORT, () => {
+}
+
+https.createServer(credentials, app).listen(HTTPSPORT, () => {
     console.log(`HTTPS Server is running on https://localhost:${HTTPSPORT}`)
-  })
+})

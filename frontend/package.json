@@ -17,6 +17,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "nuxt": "^3.13.0",
     "nuxt-app": "file:",
-    "vue": "latest"
+    "vue": "latest",
+    "yup": "^1.4.0"
   }
 }
