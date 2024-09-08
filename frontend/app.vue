@@ -1,10 +1,12 @@
 <template>
   <div class="font-montserrat">
-    <NuxtLoadingIndicator height="2" throttle="0" />
+    <NuxtLoadingIndicator :height="2" :throttle="0" />
 
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+
+    <UNotifications />
   </div>
 </template>
 

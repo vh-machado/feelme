@@ -26,8 +26,8 @@ const links = [
     label: 'User',
     avatar: { src: 'https://avatars.githubusercontent.com/u/73856054?v=4' }
   }, {
-    label: 'Help',
-    icon: 'i-heroicons-question-mark-circle'
+    label: 'Sign Up',
+    to: 'sign-up'
   }]
 ]
 </script>
