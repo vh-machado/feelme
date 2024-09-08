@@ -4,14 +4,17 @@ const connectDB = require('./config/database');
 const app = express();
 const os = require('os');
 
+
 // Conectar ao MongoDB
 connectDB();
+
 
 // Middleware para analisar JSON
 app.use(express.json({ extended: false }));
 
 // Definir rotas
 app.use('/api/auth', require('./routes/auth'));
+
 
 // Porta do serviço
 const PORT = process.env.PORT || 5001;

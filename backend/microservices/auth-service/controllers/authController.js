@@ -1,28 +1,34 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/user.model');
 
 // Registrar usuário
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
-  console.log('Iniciando a função de register...');
-  
+  // Definindo valores padrão para nickname e userRole se estiverem vazios
+  const { name, nickname, email, password, userRole } = req.body;
+ 
   try {
+    // Verificar se o usuário já existe pelo email
     let user = await User.findOne({ email });
     if (user) {
       console.log('Usuário já existe:', email);
       return res.status(400).json({ msg: 'Usuário já existe' });
     }
 
-    user = new User({ name, email, password });
+    // Criar novo usuário com valores padrão se necessário
+    user = new User({ name, nickname, email, password, userRole });
 
+    // Criptografar a senha
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
+    // Salvar o novo usuário no banco de dados
     await user.save();
 
+    // Criar o payload para o JWT
     const payload = { user: { id: user.id } };
 
+    // Gerar o token JWT
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
@@ -77,20 +83,6 @@ exports.login = async (req, res) => {
     );
   } catch (err) {
     console.error('Erro no servidor durante o login:', err.message);
-    res.status(500).send('Erro no servidor');
-  }
-};
-
-// Obter todos os usuários
-exports.getAllUsers = async (req, res) => {
-  console.log('Iniciando getAllUsers...');
-  
-  try {
-    const users = await User.find().select('-password'); // Não retornar a senha
-    console.log('Usuários encontrados:', users.length);
-    res.json(users);
-  } catch (err) {
-    console.error('Erro no servidor ao obter usuários:', err.message);
     res.status(500).send('Erro no servidor');
   }
 };
