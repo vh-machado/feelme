@@ -2,19 +2,15 @@
   <div class="flex justify-center py-8">
     <div class="flex w-[950px] justify-center">
       <UForm :schema="schema" :state="state" class="w-1/2 space-y-4" @submit="onSubmit">
-        <UFormGroup label="Name" name="name">
-          <UInput v-model="state.name" />
-        </UFormGroup>
-
         <UFormGroup label="Nickname" name="nickname">
-          <UInput v-model="state.nickname" />
-        </UFormGroup>
-
-        <UFormGroup label="Email" name="email">
-          <UInput v-model="state.email" />
+          <UInput v-model="state.nickname" size="xl" />
         </UFormGroup>
 
         <UFormGroup label="Password" name="password">
+          <UInput v-model="state.password" type="password" />
+        </UFormGroup>
+
+        <UFormGroup label="Confirm Password" name="passwordConfirm">
           <UInput v-model="state.password" type="password" />
         </UFormGroup>
 
@@ -29,6 +25,8 @@
 <script setup lang="ts">
 import { object, string, type InferType } from 'yup'
 import type { FormSubmitEvent } from '#ui/types'
+
+const toast = useToast()
 
 const schema = object({
   name: string()
@@ -48,9 +46,7 @@ const schema = object({
 type Schema = InferType<typeof schema>
 
 const state = reactive({
-  name: undefined,
   nickname: undefined,
-  email: undefined,
   password: undefined
 })
 
@@ -71,6 +67,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   })
 }
 
-const toast = useToast()
+
+
 
 </script>

@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "feelme-app",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,8 +15,11 @@
     "@nuxt/eslint": "^0.5.5",
     "@nuxt/ui": "^2.18.4",
     "@nuxtjs/google-fonts": "^3.2.0",
+    "@pinia/nuxt": "^0.5.4",
+    "feelme-app": "file:",
     "nuxt": "^3.13.0",
     "nuxt-app": "file:",
+    "pinia": "^2.2.2",
     "vue": "latest",
     "yup": "^1.4.0"
   }
