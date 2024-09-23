@@ -1,8 +1,20 @@
 const User = require("../../user-service/models/user.model");
 
-exports.getUser = async (res) => {
+
+exports.getUsers = async (req, res) => {
   try {
-    const user = await User.find().populate("id");
+    const user = await User.find(); 
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Erro ao buscar User:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
+
+exports.getUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id); 
     res.status(200).json(user);
   } catch (err) {
     console.error("Erro ao buscar User:", err.message);
@@ -12,6 +24,9 @@ exports.getUser = async (res) => {
 
 exports.saveUser = async (req, res) => {
   const { id, name, nickname, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ msg: "Nome, email e senha são obrigatórios" });
+  }
 
   try {
     const user = new User({
@@ -33,6 +48,9 @@ exports.saveUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, nickname, email, password } = req.body;
+  if (!name && !nickname && !email && !password) {
+    return res.status(400).json({ msg: "Pelo menos um campo deve ser atualizado" });
+  }
 
   try {
     let user = await User.findById(id);
@@ -43,6 +61,7 @@ exports.updateUser = async (req, res) => {
 
     user.name = name || user.name;
     user.nickname = nickname || user.nickname;
+    user.email = email || user.email;
     user.password = password || user.password;
 
     await user.save();
