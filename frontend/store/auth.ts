@@ -1,8 +1,9 @@
-
 import { defineStore } from 'pinia';
+//import { useSessionStore } from './session';
+//const { setSession } = useSessionStore()
 
 interface UserPayloadInterface {
-  nickname: string;
+  email: string;
   password: string;
 }
 
@@ -13,26 +14,27 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   actions: {
-    async authenticateUser({ nickname, password }: UserPayloadInterface) {
-      // const { data, pending }: any = await useFetch('apiurl', {
-      //   method: 'post',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: {
-      //     username,
-      //     password,
-      //   },
-      // });
-      // this.loading = pending;
+    async authenticateUser({ email, password }: UserPayloadInterface) {
+      const body = ref({ email, password })
+      const config = useRuntimeConfig()
 
-      const data = ref({
-        user: 'john'
+      const { data, status } = await useFetch('auth-service/api/auth/login', {
+        baseURL: config.public.gatewayBaseUrl,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body,
       })
 
-      this.loading = false
+      this.loading = status.value === 'pending'
 
-      if (data.value) {
+      if (status.value === 'success') {
         const token = useCookie('token'); // useCookie new hook in nuxt 3
-        token.value = JSON.stringify(data?.value); // set token to cookie
+
+        //setSession({ id: '1', nickname: 'teste' })
+
+        token.value = JSON.stringify(data.value); // set token to cookie
         this.authenticated = true; // set authenticated  state value to true
         console.log(token.value)
       }

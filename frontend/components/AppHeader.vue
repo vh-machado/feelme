@@ -1,5 +1,5 @@
 <template>
-  <div class="flex border-b border-gray-200 dark:border-gray-800 items-center p-2">
+  <div class="flex border-b border-slate-600 bg-dark-purple items-center p-2">
     <ULink to="/" class="px-4 font-k2d font-bold text-2xl">
       Feel<span class="text-indigo-300">me</span>
     </ULink>

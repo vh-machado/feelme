@@ -1,9 +1,17 @@
 <template>
-  <div class="flex justify-center py-8">
-    <div class="flex flex-col w-[950px] justify-center gap-4">
+  <div class="flex h-full justify-center gap-4">
+    <div class="flex w-full flex-col justify-center items-center gap-4">
+      <div class="font-k2d font-bold text-5xl">
+        Feel<span class="text-indigo-300">me</span>
+      </div>
+    </div>
+
+    <UDivider orientation="vertical" :ui="{ border: { base: 'border-slate-600 dark:border-slate-600'} }" />
+
+    <div class="flex w-full flex-col justify-center items-center gap-4 py-4 pe-4">
       <UForm :schema="schema" :state="state" class="w-1/2 space-y-4" @submit="login">
-        <UFormGroup label="Usuário" name="nickname">
-          <UInput v-model="state.nickname" placeholder="Nome de usuário" size="xl" icon="i-mingcute-at-line" />
+        <UFormGroup label="E-mail" name="email">
+          <UInput v-model="state.email" placeholder="E-mail de usuário" size="xl" icon="i-mingcute-at-line" />
         </UFormGroup>
 
         <UFormGroup label="Senha" name="password">
@@ -32,30 +40,33 @@ import { useAuthStore } from '~/store/auth'; // import the auth store we just cr
 const { authenticateUser } = useAuthStore(); // use authenticateUser action from  auth store
 const { authenticated } = storeToRefs(useAuthStore()); // make authenticate
 
-const router = useRouter()
 const toast = useToast()
 
 const schema = object({
-  nickname: string()
+  email: string()
     .min(3, 'Must be at least 3 characters')
     .required('Required'),
   password: string()
-    .min(8, 'Must be at least 8 characters')
+    .min(3, 'Must be at least 3 characters')
     .required('Required')
 })
 
 type Schema = InferType<typeof schema>
 
 const state = reactive({
-  nickname: undefined,
+  email: undefined,
   password: undefined
 })
 
 const login = async (event: FormSubmitEvent<Schema>) => {
   await authenticateUser(event.data); // call authenticateUser and pass the user object
   // redirect to homepage if user is authenticated
-  if (authenticated) {
-    router.push('/');
+
+  if (authenticated.value) {
+    toast.add({ title: 'Bem-vindo!', icon: 'i-mingcute-happy-fill' })
+    navigateTo('/')
+  } else {
+    toast.add({ title: 'Informações inválidas', color: 'red', icon: 'i-mingcute-warning-fill' })
   }
 };
 
