@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Criar o payload para o JWT
-    const payload = { user: { id: user.id } };
+    const payload = { user: { id: user.id, name: user.name, userRole: user.userRole } };
 
     // Gerar o token JWT
     jwt.sign(
@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: 'Credenciais inválidas' });
     }
 
-    const payload = { user: { id: user.id } };
+    const payload = { user: { id: user.id, name: user.name, userRole: user.userRole } };
 
     jwt.sign(
       payload,
