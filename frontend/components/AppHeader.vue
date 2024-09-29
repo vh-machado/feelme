@@ -13,12 +13,13 @@
 </template>
 
 <script setup lang="ts">
-
 import { storeToRefs } from 'pinia'
+
 import { useAuthStore } from '~/store/auth'
+import { useSessionStore } from '~/store/session'
 
 const { logUserOut } = useAuthStore()
-const { authenticated } = storeToRefs(useAuthStore())
+const { user } = storeToRefs(useSessionStore());
 
 const links = [
   [{
@@ -30,7 +31,7 @@ const links = [
     icon: 'i-mingcute:message-3-fill',
     to: 'reviews'
   }], [{
-    label: 'User',
+    label: user.value.nickname,
     avatar: { src: 'https://avatars.githubusercontent.com/u/73856054?v=4' }
   }, {
     label: 'Logout',

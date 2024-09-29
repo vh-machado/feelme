@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-//import { useSessionStore } from './session';
-//const { setSession } = useSessionStore()
+
+import { useSessionStore } from './session';
 
 interface UserPayloadInterface {
   email: string;
@@ -30,20 +30,25 @@ export const useAuthStore = defineStore('auth', {
       this.loading = status.value === 'pending'
 
       if (status.value === 'success') {
-        const token = useCookie('token'); // useCookie new hook in nuxt 3
+        const token = useCookie('token');
 
-        //setSession({ id: '1', nickname: 'teste' })
+        token.value = JSON.stringify(data.value);
 
-        token.value = JSON.stringify(data.value); // set token to cookie
-        this.authenticated = true; // set authenticated  state value to true
-        console.log(token.value)
+        const { createSession } = useSessionStore()
+        createSession(token.value)
+
+        this.authenticated = true;
       }
     },
 
     logUserOut() {
-      const token = useCookie('token'); // useCookie new hook in nuxt 3
-      this.authenticated = false; // set authenticated  state value to false
-      token.value = null; // clear the token cookie
-    },
+      const token = useCookie('token');
+      
+      const { removeSession } = useSessionStore()
+      removeSession()
+
+      this.authenticated = false;
+      token.value = null;
+    }
   },
 });
