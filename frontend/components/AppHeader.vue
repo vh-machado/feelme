@@ -13,6 +13,13 @@
 </template>
 
 <script setup lang="ts">
+
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '~/store/auth'
+
+const { logUserOut } = useAuthStore()
+const { authenticated } = storeToRefs(useAuthStore())
+
 const links = [
   [{
     label: 'Filmes',
@@ -26,8 +33,9 @@ const links = [
     label: 'User',
     avatar: { src: 'https://avatars.githubusercontent.com/u/73856054?v=4' }
   }, {
-    label: 'Sign Up',
-    to: 'sign-up'
+    label: 'Logout',
+    to: 'login',
+    click: logUserOut
   }]
 ]
 </script>
