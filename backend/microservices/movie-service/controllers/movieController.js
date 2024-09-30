@@ -40,11 +40,21 @@ exports.getMovieById = async (req, res) => {
    
    try {
     const { movie_id } = req.params;
+
+    const { language } = req.query;
+
+    const languageParam = language || 'pt-BR'; 
+
+   
     // URL da API TMDB
     const url = `https://api.themoviedb.org/3/movie/${movie_id}`;
 
+    const params = {
+      language: languageParam
+    }
 
     const response = await axios.get(url, {
+      params: params,
       headers: {
         Authorization: `Bearer ${process.env.TMDB_API_KEY}`, // Use o token da API do TMDB
         accept: 'application/json'
