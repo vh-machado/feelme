@@ -1,5 +1,5 @@
 <template>
-  <div class="flex border-b border-gray-200 dark:border-gray-800 items-center p-2">
+  <div class="flex border-b border-slate-600 bg-dark-purple items-center p-2">
     <ULink to="/" class="px-4 font-k2d font-bold text-2xl">
       Feel<span class="text-indigo-300">me</span>
     </ULink>
@@ -13,12 +13,13 @@
 </template>
 
 <script setup lang="ts">
-
 import { storeToRefs } from 'pinia'
+
 import { useAuthStore } from '~/store/auth'
+import { useSessionStore } from '~/store/session'
 
 const { logUserOut } = useAuthStore()
-const { authenticated } = storeToRefs(useAuthStore())
+const { user } = storeToRefs(useSessionStore());
 
 const links = [
   [{
@@ -30,7 +31,7 @@ const links = [
     icon: 'i-mingcute:message-3-fill',
     to: 'reviews'
   }], [{
-    label: 'User',
+    label: user.value.nickname,
     avatar: { src: 'https://avatars.githubusercontent.com/u/73856054?v=4' }
   }, {
     label: 'Logout',
