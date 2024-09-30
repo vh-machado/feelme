@@ -20,7 +20,7 @@ exports.getMoviesPopular = async (req, res) => {
     const response = await axios.get(url, {
       params: params,
       headers: {
-        Authorization: `Bearer ${process.env.TMDB_API_KEY}`, // Use o token da API do TMDB
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
         accept: 'application/json'
       }
     });
@@ -56,7 +56,7 @@ exports.getMovieById = async (req, res) => {
     const response = await axios.get(url, {
       params: params,
       headers: {
-        Authorization: `Bearer ${process.env.TMDB_API_KEY}`, // Use o token da API do TMDB
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
         accept: 'application/json'
       }
     });
