@@ -13,9 +13,9 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 // Definir rotas
-app.use('/api/user', require('./routes/user'));
-app.use('/api/review', require('./routes/review'));
-app.use('/api/userMovie', require('./routes/userMovie'));
+app.use('/api/social', require('./routes/user'));
+app.use('/api/social', require('./routes/review'));
+app.use('/api/social', require('./routes/userMovie'));
 
 
 // Porta do serviço
@@ -32,7 +32,7 @@ const getHostName = () => {
 // Iniciar o servidor
 app.listen(PORT, () => {
     const host = getHostName();
-    const serviceUrl = `http://${host}:${PORT}/api/user`;
+    const serviceUrl = `http://${host}:${PORT}/api/social`;
     console.log(`URL de requisição para o serviço de usuários: ${serviceUrl}`);
     console.log(`Servidor iniciado na porta: ${PORT}`);
 });

@@ -48,9 +48,9 @@ app.use('/auth-service', createProxyMiddleware({
     },
 }));
 
-app.use('/user-service', createProxyMiddleware({
+app.use('/social-service', createProxyMiddleware({
     target: process.env.USER_SERVICE_URL, // URL do serviço de autenticação
-    pathRewrite: { '^/user-service': '' }, // Remove o prefixo /auth-service
+    pathRewrite: { '^/social-service': '' }, // Remove o prefixo /auth-service
     changeOrigin: true,
     logger: console,
     on: {
