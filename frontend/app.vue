@@ -1,5 +1,5 @@
 <template>
-  <div class="font-montserrat">
+  <div class="font-montserrat h-screen bg-gradient-to-b from-dark-purple to-rich-black">
     <NuxtLoadingIndicator :height="2" :throttle="0" />
 
     <NuxtLayout v-if="authenticated">

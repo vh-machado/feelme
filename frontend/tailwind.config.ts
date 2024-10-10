@@ -6,6 +6,10 @@ export default <Partial<Config>>{
       fontFamily: {
         k2d: ['K2D'],
         montserrat: ['Montserrat']
+      },
+      colors: {
+        'dark-purple': '#2C2739',
+        'rich-black': '#0D1F2E'
       }
     }
   }
