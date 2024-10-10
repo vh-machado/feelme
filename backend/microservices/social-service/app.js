@@ -14,6 +14,8 @@ app.use(express.json({ extended: false }));
 
 // Definir rotas
 app.use('/api/user', require('./routes/user'));
+app.use('/api/review', require('./routes/review'));
+app.use('/api/userMovie', require('./routes/userMovie'));
 
 
 // Porta do serviço
