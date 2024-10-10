@@ -11,6 +11,18 @@ exports.getReviews = async (res) => {
   }
 };
 
+
+exports.getReviewById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const review = await Review.findById(id); 
+    res.status(200).json(review);
+  } catch (err) {
+    console.error("Erro ao buscar Review:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
+
 exports.saveReview = async (req, res) => {
   const { id, idUserMovie, text, likes } = req.body;
 
