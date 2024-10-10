@@ -1,8 +1,8 @@
 const UserMovie = require("../models/userMovie.model");
-const User = require("../user-service/user.model");
-const Movie = require("../movie-service/movie.model");
+const User = require("../models/user.model");
+const Movie = require("../../movie-service/models/movie.model");
 
-exports.getAllUserReviews = async (res, res) => {
+exports.getAllUserReviews = async (req, res) => {
 
   const { userId } = req.params;
   
@@ -29,7 +29,7 @@ exports.getAllUserReviews = async (res, res) => {
   }
 };
 
-exports.getUserReviewsByMovie = async (res, res) => {
+exports.getUserReviewsByMovie = async (req, res) => {
 
   const { userId, movieId } = req.params;
   

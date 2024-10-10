@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const UserMovie = require("../../userMovie-service/models/userMovie.model");
+const UserMovie = require("./userMovie.model");
 
 const ReviewSchema = new mongoose.Schema({
   id: {
@@ -7,7 +7,7 @@ const ReviewSchema = new mongoose.Schema({
     required: true,
   },
   idUserMovie: {
-    type: UserMovie.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "UserMovie",
   },
   text: {

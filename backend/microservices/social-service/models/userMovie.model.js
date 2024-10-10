@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("../../user-service/models/user.model");
+const User = require("./user.model");
 const Movie = require("../../movie-service/models/movie.model");
 
 const UserMovieSchema = new mongoose.Schema({
@@ -8,12 +8,12 @@ const UserMovieSchema = new mongoose.Schema({
     required: true,
   },
   idMovie: {
-    type: Movie.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Movie",
     required: true,
   },
   idUser: {
-    type: User.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },

@@ -1,4 +1,4 @@
-const UserMovie = require("../../userMovie-service/models/userMovie.model");
+const UserMovie = require("../models/userMovie.model");
 const Review = require("../models/review.model");
 
 exports.getReviews = async (res) => {
