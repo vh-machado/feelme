@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const UserMovie = require("./userMovie.model");
 
 const ReviewSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
   idUserMovie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserMovie",

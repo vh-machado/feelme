@@ -1,14 +1,10 @@
 const mongoose = require("mongoose");
 const User = require("./user.model");
-const Movie = require("../../movie-service/models/movie.model");
+const Movie = require("../../movie-service/models/movie.model").default;
 
 const UserMovieSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
   idMovie: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Number,
     ref: "Movie",
     required: true,
   },

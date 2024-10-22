@@ -1,13 +1,14 @@
+require('dotenv').config();
 const UserMovie = require("../models/userMovie.model");
 const User = require("../models/user.model");
-const Movie = require("../../movie-service/models/movie.model");
+const Movie = require("../../movie-service/models/movie.model").default;
 
 exports.getAllUserReviews = async (req, res) => {
 
   const { userId } = req.params;
-  
+
   try {
-     const userMovies = await UserMovie.find({ idUser: userId  }).populate("idMovie", "id").exec();
+    const userMovies = await UserMovie.find({ idUser: userId }).populate("idMovie", "id").exec();
 
     const userMovieIds = userMovies.map(userMovie => userMovie._id);
 
@@ -32,11 +33,11 @@ exports.getAllUserReviews = async (req, res) => {
 exports.getUserReviewsByMovie = async (req, res) => {
 
   const { userId, movieId } = req.params;
-  
-  try {
-     const userMovie = await UserMovie.findOne({ usuario: userId, filme: movieId });
 
-     if (!userMovie) {
+  try {
+    const userMovie = await UserMovie.findOne({ usuario: userId, filme: movieId });
+
+    if (!userMovie) {
       return res.status(404).json({ message: "Nenhuma associação encontrada entre o usuário e o filme." });
     }
 
@@ -71,10 +72,12 @@ exports.getUserMovies = async (res) => {
 };
 
 exports.saveUserMovie = async (req, res) => {
-  const { id, idMovie, idUser, loggedAt, rewatch } = req.body;
+  const { idMovie, idUser, loggedAt, rewatch } = req.body;
 
   try {
-    const movie = await Movie.findById(idMovie);
+    const movie = fetch(`${process.env.GATEWAY_BASE_URL}/movie-service/api/movie/${idMovie}`)
+      .then((response) => response.data)
+
     const user = await User.findById(idUser);
 
     if (!movie) {
@@ -85,7 +88,6 @@ exports.saveUserMovie = async (req, res) => {
     }
 
     const userMovie = new UserMovie({
-      id,
       idMovie,
       idUser,
       loggedAt,

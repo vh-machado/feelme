@@ -1,7 +1,7 @@
 const UserMovie = require("../models/userMovie.model");
 const Review = require("../models/review.model");
 
-exports.getReviews = async (res) => {
+exports.getReviews = async (req, res) => {
   try {
     const reviews = await Review.find().populate("idUserMovie");
     res.status(200).json(reviews);
