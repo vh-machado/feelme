@@ -3,7 +3,10 @@ const Review = require("../models/review.model");
 
 exports.getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find().populate("idUserMovie");
+    const reviews = await Review.find().populate({
+      path: "idUserMovie",
+      populate: { path: "idUser", select: "name nickname email" }
+    });
     res.status(200).json(reviews);
   } catch (err) {
     console.error("Erro ao buscar Critícas:", err.message);
