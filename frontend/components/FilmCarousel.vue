@@ -1,5 +1,5 @@
 <template>
-  <div v-if="pending" class="flex items-center gap-4 p-4">
+  <div v-if="status === 'pending'" class="flex items-center gap-4 p-4">
     <USkeleton class="w-full h-[345px]" />
   </div>
 
@@ -30,7 +30,7 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
 
-const { pending } = await useMovieAPI('trending/movie/week', {
+const { status } = await useMovieAPI('trending/movie/week', {
   method: 'GET',
   query: { language: 'en-US', page: '1' },
   transform: (data) => {

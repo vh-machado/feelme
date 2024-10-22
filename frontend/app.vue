@@ -1,15 +1,17 @@
 <template>
-  <div class="font-montserrat h-screen bg-gradient-to-b from-dark-purple to-rich-black">
-    <NuxtLoadingIndicator :height="2" :throttle="0" />
+  <ClientOnly>
+    <div class="font-montserrat h-screen bg-gradient-to-b from-dark-purple to-rich-black">
+      <NuxtLoadingIndicator :height="2" :throttle="0" />
 
-    <NuxtLayout v-if="authenticated">
-      <NuxtPage />
-    </NuxtLayout>
+      <NuxtLayout v-if="authenticated">
+        <NuxtPage />
+      </NuxtLayout>
 
-    <NuxtPage v-else/>
+      <NuxtPage v-else/>
 
-    <UNotifications />
-  </div>
+      <UNotifications />
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
