@@ -1,7 +1,6 @@
 const UserMovie = require("../models/userMovie.model");
 const Review = require("../models/review.model");
-const { getMovieById } = require('../../movie-service/controllers/movieController');
-const { id } = require("../../movie-service/models/movie.model");
+const { findMovieById } = require("../../movie-service/controllers/movieController")
 
 exports.getReviews = async (req, res) => {
   try {
@@ -10,42 +9,42 @@ exports.getReviews = async (req, res) => {
       populate: { path: "idUser", select: "name nickname email" }
     });
 
-    const customReviews = await Promise.all(
-      reviews.map(async (review) => {
-        const movieId = review.idUserMovie.idMovie;
-  
-        const movieData = await getMovieById(movieId, undefined);
+    const customReviews = []
 
-        return {
-          reviewId: review._id,
-          text: review.text,
-          likes: review.likes,
-          UserMovie:{
-            _id: review.idUserMovie._id,
-            idMovie: review.idUserMovie.idMovie,
-            idUser: review.idUserMovie.idUser,
-            loggedAt: review.idUserMovie.loggedAt,
-            rewatch: review.idUserMovie.rewatch,
-          },
-          User: {
-            _id: review.idUserMovie.idUser,
-            name: review.idUserMovie.idUser.name,
-            nickname: review.idUserMovie.idUser.nickname,
-            email: review.idUserMovie.idUser.email
-          },
-          Movie: {
-            id: movieId,
-            backdrop_path: movieData.backdrop_path,
-            title: movieData.title,
-            overview: movieData.overview,
-            poster_path: movieData.poster_path,
-            genre_ids: movieData.genre_ids,
-            release_date: movieData.release_date
-          
-          }
-        };
-      })
-    );
+    for(const review of reviews) {
+      const movieId = review.idUserMovie.idMovie;
+
+      const movieResponse = await findMovieById(movieId)
+      const movieData = movieResponse.data
+
+      customReviews.push({
+        reviewId: review._id,
+        text: review.text,
+        likes: review.likes,
+        UserMovie: {
+          _id: review.idUserMovie._id,
+          idMovie: review.idUserMovie.idMovie,
+          idUser: review.idUserMovie.idUser,
+          loggedAt: review.idUserMovie.loggedAt,
+          rewatch: review.idUserMovie.rewatch,
+        },
+        User: {
+          _id: review.idUserMovie.idUser,
+          name: review.idUserMovie.idUser.name,
+          nickname: review.idUserMovie.idUser.nickname,
+          email: review.idUserMovie.idUser.email
+        },
+        Movie: {
+          id: movieId,
+          backdrop_path: movieData.backdrop_path,
+          title: movieData.title,
+          overview: movieData.overview,
+          poster_path: movieData.poster_path,
+          genre_ids: movieData.genre_ids,
+          release_date: movieData.release_date
+        }
+      }); 
+    }
     res.status(200).json(customReviews);
   } catch (err) {
     console.error("Erro ao buscar Critícas:", err.message);
@@ -57,7 +56,7 @@ exports.getReviews = async (req, res) => {
 exports.getReviewById = async (req, res) => {
   const { id } = req.params;
   try {
-    const review = await Review.findById(id); 
+    const review = await Review.findById(id);
     res.status(200).json(review);
   } catch (err) {
     console.error("Erro ao buscar Review:", err.message);

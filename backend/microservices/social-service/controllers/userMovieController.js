@@ -1,7 +1,7 @@
 require('dotenv').config();
 const UserMovie = require("../models/userMovie.model");
 const User = require("../models/user.model");
-const Movie = require("../../movie-service/models/movie.model").default;
+const { findMovieById } = require("../../movie-service/controllers/movieController")
 
 exports.getAllUserReviews = async (req, res) => {
 
@@ -75,8 +75,8 @@ exports.saveUserMovie = async (req, res) => {
   const { idMovie, idUser, loggedAt, rewatch } = req.body;
 
   try {
-    const movie = fetch(`${process.env.GATEWAY_BASE_URL}/movie-service/api/movie/${idMovie}`)
-      .then((response) => response.data)
+    const movieResponse = await findMovieById(idMovie)
+    const movie = movieResponse.data
 
     const user = await User.findById(idUser);
 
