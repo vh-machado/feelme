@@ -1,7 +1,8 @@
 require('dotenv').config();
+const axios = require('axios');
+
 const UserMovie = require("../models/userMovie.model");
 const User = require("../models/user.model");
-const { findMovieById } = require("../../movie-service/controllers/movieController")
 
 exports.getAllUserReviews = async (req, res) => {
 
@@ -75,8 +76,15 @@ exports.saveUserMovie = async (req, res) => {
   const { idMovie, idUser, loggedAt, rewatch } = req.body;
 
   try {
-    const movieResponse = await findMovieById(idMovie)
-    const movie = movieResponse.data
+    const token = req.header('x-auth-token');
+    const movieServiceUrl = `${process.env.MOVIE_SERVICE_URL}/api/movie/${idMovie}`
+
+    const movie = await axios.get(movieServiceUrl, {
+      headers: {
+        'x-auth-token': token,
+        accept: 'application/json'
+      }
+    }).then(({ data: movieResponse }) => movieResponse.data)
 
     const user = await User.findById(idUser);
 

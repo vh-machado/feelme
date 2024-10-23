@@ -1,4 +1,3 @@
-const Movie = require("../models/movie.model");
 const axios = require('axios');
 
 exports.getMoviesPopular = async (req, res) => {

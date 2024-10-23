@@ -1,6 +1,8 @@
+require('dotenv').config();
+const axios = require('axios');
+
 const UserMovie = require("../models/userMovie.model");
 const Review = require("../models/review.model");
-const { findMovieById } = require("../../movie-service/controllers/movieController")
 
 exports.getReviews = async (req, res) => {
   try {
@@ -13,9 +15,16 @@ exports.getReviews = async (req, res) => {
 
     for(const review of reviews) {
       const movieId = review.idUserMovie.idMovie;
+      
+      const token = req.header('x-auth-token');
+      const movieServiceUrl = `${process.env.MOVIE_SERVICE_URL}/api/movie/${movieId}`
 
-      const movieResponse = await findMovieById(movieId)
-      const movieData = movieResponse.data
+      const movieData = await axios.get(movieServiceUrl, {
+        headers: {
+          'x-auth-token': token,
+          accept: 'application/json'
+        }
+      }).then(({ data: movieResponse }) => movieResponse.data)
 
       customReviews.push({
         reviewId: review._id,
