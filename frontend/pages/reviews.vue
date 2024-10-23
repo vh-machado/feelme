@@ -28,7 +28,7 @@ const { status } = await useSocialService('reviews', {
       });
     } else {
       toast.add({ 
-        title: 'Não foi buscar críticas!',
+        title: 'Não foi possível buscar críticas!',
         description: response._data.msg,
         color: 'red', 
         icon: 'i-mingcute-unhappy-fill'

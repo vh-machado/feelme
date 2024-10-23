@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = status.value === 'pending'
 
       if (status.value === 'success') {
-        const token = useCookie('token');
+        const token = useCookie('authToken');
 
         token.value = JSON.stringify(data.value);
 
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     logUserOut() {
-      const token = useCookie('token');
+      const token = useCookie('authToken');
       
       const { removeSession } = useSessionStore()
       removeSession()
