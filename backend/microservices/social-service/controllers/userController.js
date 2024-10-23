@@ -81,7 +81,7 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ msg: "Usuário não encontrado" });
     }
 
-    await user.remove();
+    await user.deleteOne();
     res.status(200).json({ msg: "Usuário deletado com sucesso" });
   } catch (err) {
     console.error("Erro ao deletar Usuário:", err.message);

@@ -3,6 +3,7 @@ const axios = require('axios');
 
 const UserMovie = require("../models/userMovie.model");
 const User = require("../models/user.model");
+const Review = require("../models/review.model");
 
 exports.getAllUserReviews = async (req, res) => {
 
@@ -32,35 +33,30 @@ exports.getAllUserReviews = async (req, res) => {
 };
 
 exports.getUserReviewsByMovie = async (req, res) => {
-
   const { userId, movieId } = req.params;
 
   try {
-    const userMovie = await UserMovie.findOne({ usuario: userId, filme: movieId });
+      const userMovie = await UserMovie.findOne({
+          idUser: userId,
+          idMovie: movieId
+      });
 
-    if (!userMovie) {
-      return res.status(404).json({ message: "Nenhuma associação encontrada entre o usuário e o filme." });
-    }
+      if (!userMovie) {
+          return res.status(404).json({ message: "Nenhuma associação encontrada entre o usuário e o filme." });
+      }
 
-    const reviews = await Review.find({ idUserMovie: userMovie.id })
-      .populate({
-        path: 'idUserMovie',
-        populate: { path: "idMovie", select: "id" }
-      })
-      .exec();
+      const reviews = await Review.find({ _id: { $in: userMovie.reviews } })
+          .populate('movie') 
+          .exec();
 
-    if (!reviews || reviews.length === 0) {
-      return res.status(404).json({ message: "Nenhuma review encontrada para este usuário neste filme." });
-    }
-    res.status(200).json(reviews);
+      res.status(200).json(reviews);
 
   } catch (err) {
-    console.error("Erro ao buscar reviews do user:", err.message);
-    res.status(500).send("Erro ao buscar reviews");
+      console.error("Erro ao buscar reviews do user:", err.message);
+      res.status(500).send("Erro ao buscar reviews");
   }
 };
-
-exports.getUserMovies = async (res) => {
+exports.getUserMovies = async (req, res) => {
   try {
     const userMovies = await UserMovie.find()
       .populate("idMovie")

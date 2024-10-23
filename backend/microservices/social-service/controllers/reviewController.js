@@ -131,7 +131,7 @@ exports.deleteReview = async (req, res) => {
       return res.status(404).json({ msg: "Critíca não encontrada" });
     }
 
-    await review.remove();
+    await review.deleteOne();
     res.status(200).json({ msg: "Critíca deletada com sucesso" });
   } catch (err) {
     console.error("Erro ao deletar Critíca:", err.message);

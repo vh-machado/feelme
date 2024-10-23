@@ -13,9 +13,9 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 // Definir rotas
-app.use('/api/social', require('./routes/user'));
-app.use('/api/social', require('./routes/review'));
-app.use('/api/social', require('./routes/userMovie'));
+app.use('', require('./routes/user'));
+app.use('', require('./routes/review'));
+app.use('', require('./routes/userMovie'));
 
 
 // Porta do serviço

@@ -5,7 +5,6 @@ const Movie = require("../../movie-service/models/movie.model").default;
 const UserMovieSchema = new mongoose.Schema({
   idMovie: {
     type: Number,
-    ref: "Movie",
     required: true,
   },
   idUser: {
@@ -21,6 +20,6 @@ const UserMovieSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-});
+},{ strictPopulate: false });
 
 module.exports = mongoose.model("UserMovie", UserMovieSchema);;
