@@ -1,6 +1,6 @@
 const UserMovie = require("../models/userMovie.model");
 const Review = require("../models/review.model");
-const { fetchMovieById } = require('../../movie-service/controllers/movieController');
+const { getMovieById } = require('../../movie-service/controllers/movieController');
 const { id } = require("../../movie-service/models/movie.model");
 
 exports.getReviews = async (req, res) => {
@@ -14,7 +14,7 @@ exports.getReviews = async (req, res) => {
       reviews.map(async (review) => {
         const movieId = review.idUserMovie.idMovie;
   
-        const movieData = await fetchMovieById(movieId);
+        const movieData = await getMovieById(movieId, undefined);
 
         return {
           reviewId: review._id,
@@ -46,7 +46,7 @@ exports.getReviews = async (req, res) => {
         };
       })
     );
-    res.status(200).json(reviews);
+    res.status(200).json(customReviews);
   } catch (err) {
     console.error("Erro ao buscar Critícas:", err.message);
     res.status(500).send("Erro no servidor");
