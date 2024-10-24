@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div class="font-montserrat h-screen bg-gradient-to-b from-dark-purple to-rich-black">
+    <div class="font-montserrat h-screen bg-gradient-to-b from-dark-purple to-rich-black overflow-y-auto">
       <NuxtLoadingIndicator :height="2" :throttle="0" />
 
       <NuxtLayout v-if="authenticated">

@@ -1,6 +1,6 @@
 <template>
   <div v-if="status === 'pending'" class="flex items-center gap-4 p-4">
-    <USkeleton class="w-full h-[345px]" />
+    <USkeleton class="w-full h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
   </div>
 
   <template v-else>

@@ -5,13 +5,13 @@ export function useSocialService<T>(
   options?: UseFetchOptions<T>,
 ) {
   const config = useRuntimeConfig()
-  const token = useCookie('authToken')
+  const authToken = useCookie<string>('authToken')
 
   return useLazyFetch(url, {
     ...options,
-    baseURL: config.public.gatewayBaseUrl + '/social-service/api/social',
+    baseURL: config.public.gatewayBaseUrl + '/social-service',
     headers: {
-      'x-auth-token': String(token.value.token),
+      'x-auth-token': String(authToken.value),
       'Content-Type': 'application/json'
     },
     server: false
