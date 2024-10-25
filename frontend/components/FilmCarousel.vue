@@ -28,21 +28,43 @@
 </template>
 
 <script setup lang="ts">
+interface MovieResponse {
+  success: boolean
+  message: string
+  data: {
+    page: number
+    results: any[]
+    total_pages: number
+    total_results: number
+  }
+}
+
 const config = useRuntimeConfig()
 
-const { status } = await useMovieAPI('trending/movie/week', {
+const items = ref<string[]>([])
+
+const status = ref<string>('pending')
+
+
+const { data, error } = await useMovieService<MovieResponse>('trending/movie/week', {
   method: 'GET',
   query: { language: 'en-US', page: '1' },
-  transform: (data) => {
-    setPosters(data.results)
+  transform: (response) => {
+    if(response.success){
+      status.value = 'ready'
+    }
+    return response 
   }
+  
 })
 
-async function setPosters(movies: any[]) {
+function setPosters(movies: any[]) {
   for (const movie of movies) {
     items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
   }
 }
 
-const items = ref([])
+if (data.value && data.value.data.results) {
+  setPosters(data.value.data.results)
+}
 </script>
