@@ -41,7 +41,6 @@ interface MovieResponse {
 
 const config = useRuntimeConfig()
 
-// Definir o estado para os pôsteres
 const items = ref<string[]>([])
 
 const status = ref<string>('pending')
@@ -59,14 +58,12 @@ const { data, error } = await useMovieService<MovieResponse>('trending/movie/wee
   
 })
 
-// Função para configurar os pôsteres
 function setPosters(movies: any[]) {
   for (const movie of movies) {
     items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
   }
 }
 
-// Quando os dados estiverem disponíveis, configurar os pôsteres
 if (data.value && data.value.data.results) {
   setPosters(data.value.data.results)
 }
