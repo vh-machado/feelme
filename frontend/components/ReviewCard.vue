@@ -12,7 +12,7 @@
 
     <div class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
-        :src="`${config.public.tmdbImageBaseUrl}/w500/${userMovie.movie.posterPath}`" draggable="false"
+        :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
         class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
       >
       

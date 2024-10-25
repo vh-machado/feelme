@@ -11,7 +11,7 @@
         </template>
       </UHorizontalNavigation>
 
-      <UButton to="/reviews/new" icon="i-mingcute:quill-pen-ai-fill">
+      <UButton v-if="route.name !== 'reviews-new'" color="green" to="/reviews/new" icon="i-mingcute:quill-pen-ai-fill" :ui="{ rounded: 'rounded-e rounded-s-3xl' } ">
         Escrever crítica
       </UButton>
     </div>
@@ -26,6 +26,8 @@ import { useSessionStore } from '~/store/session'
 
 const { logUserOut } = useAuthStore()
 const { user } = storeToRefs(useSessionStore());
+
+const route = useRoute()
 
 const links = [
   [],
