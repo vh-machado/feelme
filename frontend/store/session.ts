@@ -14,9 +14,10 @@ export const useSessionStore = defineStore('session', {
   }),
 
   actions: {
-    createSession(token: string) {
-      const jwtToken = JSON.parse(token)
-      const decodedData: { [key: string]: { [key: string]: string } } = jwt_decode(jwtToken.token || '') || null;
+    createSession(authToken: string) {
+      const decodedData: { 
+        [key: string]: { [key: string]: string } 
+      } = jwt_decode(authToken || '') || null;
 
       this.user = {
         id: decodedData?.user.id,
@@ -24,8 +25,6 @@ export const useSessionStore = defineStore('session', {
         nickname: decodedData?.user.nickname,
         userRole: decodedData?.user.userRole
       }
-
-      console.log(this.user)
     },
 
     removeSession() {

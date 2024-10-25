@@ -1,6 +1,6 @@
 <template>
   <div v-if="status === 'pending'" class="flex items-center gap-4 p-4">
-    <USkeleton class="w-full h-[345px]" />
+    <USkeleton class="w-full h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
   </div>
 
   <template v-else>
@@ -28,21 +28,43 @@
 </template>
 
 <script setup lang="ts">
+
+interface Movie {
+  poster_path: string
+}
+
+interface MovieResponse {
+  success: boolean
+  message: string
+  data: {
+    page: number
+    results: Movie[]
+    total_pages: number
+    total_results: number
+  }
+}
+
 const config = useRuntimeConfig()
 
-const { status } = await useMovieAPI('trending/movie/week', {
+const items = ref<string[]>([])
+
+const { status } = await useMovieService<MovieResponse>('trending/movie/week', {
   method: 'GET',
-  query: { language: 'en-US', page: '1' },
-  transform: (data) => {
-    setPosters(data.results)
+  query: { language: 'pt-BR', page: '1' },
+  transform: (response) => {
+    if(response.success){
+      status.value = 'ready'
+
+      if (response && response.data.results) {
+        setPosters(response.data.results)
+      }
+    }
   }
 })
 
-async function setPosters(movies: any[]) {
+function setPosters(movies: Movie[]) {
   for (const movie of movies) {
     items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
   }
 }
-
-const items = ref([])
 </script>

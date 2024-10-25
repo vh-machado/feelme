@@ -27,31 +27,29 @@ exports.getReviews = async (req, res) => {
       }).then(({ data: movieResponse }) => movieResponse.data)
 
       customReviews.push({
-        reviewId: review._id,
+        _id: review._id,
         text: review.text,
         likes: review.likes,
-        UserMovie: {
+        userMovie: {
           _id: review.idUserMovie._id,
-          idMovie: review.idUserMovie.idMovie,
-          idUser: review.idUserMovie.idUser,
+          movie: {
+            id: movieId,
+            backdropPath: movieData.backdrop_path,
+            title: movieData.title,
+            overview: movieData.overview,
+            posterPath: movieData.poster_path,
+            genreIds: movieData.genre_ids,
+            release_date: movieData.release_date
+          },
+          user: {
+            _id: review.idUserMovie._id,
+            name: review.idUserMovie.idUser.name,
+            nickname: review.idUserMovie.idUser.nickname,
+            email: review.idUserMovie.idUser.email
+          },
           loggedAt: review.idUserMovie.loggedAt,
           rewatch: review.idUserMovie.rewatch,
         },
-        User: {
-          _id: review.idUserMovie.idUser,
-          name: review.idUserMovie.idUser.name,
-          nickname: review.idUserMovie.idUser.nickname,
-          email: review.idUserMovie.idUser.email
-        },
-        Movie: {
-          id: movieId,
-          backdrop_path: movieData.backdrop_path,
-          title: movieData.title,
-          overview: movieData.overview,
-          poster_path: movieData.poster_path,
-          genre_ids: movieData.genre_ids,
-          release_date: movieData.release_date
-        }
       }); 
     }
     res.status(200).json(customReviews);

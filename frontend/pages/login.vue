@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full justify-center gap-4">
+  <div class="flex flex-col md:flex-row h-full justify-center gap-4">
     <div class="flex w-full flex-col justify-center items-center gap-4">
       <div class="font-k2d font-bold text-5xl">
         Feel<span class="text-indigo-300">me</span>
