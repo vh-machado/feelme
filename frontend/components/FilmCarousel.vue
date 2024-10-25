@@ -28,12 +28,17 @@
 </template>
 
 <script setup lang="ts">
+
+interface Movie {
+  poster_path: string
+}
+
 interface MovieResponse {
   success: boolean
   message: string
   data: {
     page: number
-    results: any[]
+    results: Movie[]
     total_pages: number
     total_results: number
   }
@@ -43,28 +48,23 @@ const config = useRuntimeConfig()
 
 const items = ref<string[]>([])
 
-const status = ref<string>('pending')
-
-
-const { data, error } = await useMovieService<MovieResponse>('trending/movie/week', {
+const { status } = await useMovieService<MovieResponse>('trending/movie/week', {
   method: 'GET',
-  query: { language: 'en-US', page: '1' },
+  query: { language: 'pt-BR', page: '1' },
   transform: (response) => {
     if(response.success){
       status.value = 'ready'
+
+      if (response && response.data.results) {
+        setPosters(response.data.results)
+      }
     }
-    return response 
   }
-  
 })
 
-function setPosters(movies: any[]) {
+function setPosters(movies: Movie[]) {
   for (const movie of movies) {
     items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
   }
-}
-
-if (data.value && data.value.data.results) {
-  setPosters(data.value.data.results)
 }
 </script>
