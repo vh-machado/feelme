@@ -10,6 +10,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "emotionanalysis-service": "file:"
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "emotionanalysis-service": "file:",
+    "express": "^4.21.1"
   }
 }

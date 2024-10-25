@@ -106,6 +106,35 @@ app.use('/movie-service', createProxyMiddleware({
     },
 }));
 
+app.use('/gemini-service', createProxyMiddleware({
+    target: process.env.EMOTION_SERVICE_URL, 
+    pathRewrite: { '^/gemini-service': '' }, 
+    changeOrigin: true,
+    logger: console,
+    on: {
+        proxyReq: fixRequestBody,
+    },
+    onProxyReq: (proxyReq, req, res) => {
+        if (req.body && req.method !== 'GET') {
+            const bodyData = JSON.stringify(req.body);
+            proxyReq.setHeader('Content-Type', 'application/json');
+            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+            proxyReq.write(bodyData);
+            proxyReq.end();
+        }
+    },
+    onProxyRes: (proxyRes, req, res) => {
+        console.log('Resposta do Servidor de Destino:', {
+            statusCode: proxyRes.statusCode,
+            headers: proxyRes.headers
+        });
+        proxyRes.pipe(res);
+    },
+    onError: (err, req, res) => {
+        res.status(500).send('Erro ao encaminhar requisição: ' + err.mmessage);
+    },
+}));
+
 
 
 // Porta do serviço

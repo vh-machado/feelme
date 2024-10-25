@@ -1,76 +1,76 @@
-const EmotionAnalysis = require("../models/EmotionAnalysis.model");
-const Review = require("../../review-service/models/review.model");
+const { runGemini } = require("./gemini.js");
 
-exports.getEmotionAnalysis = async (res) => {
+// Função para gerar o prompt com base no texto de entrada
+function generatePrompt(review) {
+  return `Retorne somente e nada mais além que um objeto json com um array com apenas as emoções identificadas nesse texto: '${review}'. Resuma cada emoção com uma palavra, não faça nenhuma explicação. Use somente essa lista de emoções: Joy, Sadness, Anger, Fear, Surprise, Disgust, Satisfaction, Anxiety, Disappointment, Doubt, Frustration, Shame, Despair, Enthusiasm, Relief, Discouragement, Guilt, Indifference, Envy, Grief. O objeto deve conter os atributos emotions, que será o array com as emoções em string, e approval, que é um score numérico para o texto utilizando a classificação Naive Bayes.`;
+}
+
+// Função para formatar o resultado de texto para JSON
+function formatResult(result) {
   try {
-    const reviews = await EmotionAnalysis.find().populate("idReview");
-    res.status(200).json(reviews);
-  } catch (err) {
-    console.error("Erro ao buscar critícas:", err.message);
-    res.status(500).send("Erro no servidor");
+    // Acesse o texto da parte
+    const jsonString = result.candidates[0].content.parts[0].text.replace(/```json\n|\n```/g, '');
+    // Aqui espera-se que jsonString seja uma string JSON válida
+    const formattedResult = JSON.parse(jsonString);
+    return formattedResult;
+  } catch (error) {
+    console.error("Erro ao formatar o resultado:", error);
+    throw new Error("Formato de resposta inválido");
   }
-};
+}
 
-exports.saveEmotionAnalysis = async (req, res) => {
-  const { id, idReview, emotions } = req.body;
+// Função para calcular o escore médio de aprovação
+function computeAverageResults(analysisResults) {
+  const totalApproval = analysisResults.reduce((acc, curr) => acc + curr.approval, 0);
+  return totalApproval / analysisResults.length;
+}
 
-  try {
-    const review = await Review.findById(idReview);
-
-    if (!review) {
-      return res.status(404).json({ msg: "Critíca não encontrada" });
-    }
-
-    const emotionAnalysis = new EmotionAnalysis({
-      id,
-      idReview,
-      emotions,
+// Função para compilar as emoções por revisão
+function computeEmotionsByMovie(analysisResults) {
+  const emotionsCount = {};
+  
+  analysisResults.forEach((result) => {
+    result.emotions.forEach((emotion) => {
+      emotionsCount[emotion] = (emotionsCount[emotion] || 0) + 1;
     });
+  });
 
-    await emotionAnalysis.save();
-    res.status(201).json(emotionAnalysis);
-  } catch (err) {
-    console.error("Erro ao salvar Análise Emocional:", err.message);
-    res.status(500).send("Erro no servidor");
+  return emotionsCount;
+}
+
+// Função principal que executa a análise de emoções em várias revisões
+async function runEmotionAnalysis(reviews) {
+  const analysisResults = [];
+
+  for (const review of reviews) {
+    const prompt = generatePrompt(review);
+    
+    // Chamada ao runGemini
+    const result = await runGemini(prompt);
+    console.log("Resultado do runGemini:", result);
+
+    // Acesse o conteúdo das emoções
+    const formattedResult = formatResult(result); // Formate o conteúdo
+    analysisResults.push(formattedResult);
   }
-};
 
-exports.updateEmotionAnalysis = async (req, res) => {
-  const { id } = req.params;
-  const { idReview, emotions } = req.body;
+  return {
+    averageApproval: computeAverageResults(analysisResults),
+    emotionsByMovie: computeEmotionsByMovie(analysisResults),
+  };
+}
+
+// Controlador que recebe a lista de revisões e executa a análise completa
+async function emotionAnalysis(req, res) {
+  const { reviews } = req.body;
 
   try {
-    let emotionAnalysis = await EmotionAnalysis.findById(id);
-
-    if (!emotionAnalysis) {
-      return res.status(404).json({ msg: "Análise Emocional não encontrada" });
-    }
-
-    emotionAnalysis.idReview = idReview || review.idReview;
-    emotionAnalysis.emotions = emotions || review.emotions;
-
-    await emotionAnalysis.save();
-    res.status(200).json(emotionAnalysis);
-  } catch (err) {
-    console.error("Erro ao atualizar Análise Emocional:", err.message);
-    res.status(500).send("Erro no servidor");
+    const analysis = await runEmotionAnalysis(reviews);
+    res.status(200).json(analysis);
+  } catch (error) {
+    console.error("Erro ao processar a análise de emoções:", error.message);
+    res.status(500).json({ error: "Erro ao processar a análise de emoções." });
   }
-};
+}
 
-exports.deleteEmotionAnalysis = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const emotionAnalysis = await EmotionAnalysis.findById(id);
-
-    if (!emotionAnalysis) {
-      return res.status(404).json({ msg: "Análise Emocional não encontrada" });
-    }
-
-    await emotionAnalysis.remove();
-    res.status(200).json({ msg: "Análise Emocional deletada com sucesso" });
-  } catch (err) {
-    console.error("Erro ao deletar Análise Emocional:", err.message);
-    res.status(500).send("Erro no servidor");
-  }
-};
+module.exports = { emotionAnalysis };
