@@ -62,9 +62,17 @@
         </div>
       </div>
       
-      <UButton size="lg" :color="likedReview ? 'red' : 'gray'" variant="ghost" icon="ic:round-favorite" :ui="{ variant: { ghost: likedReview ? 'dark:hover:bg-red-500/20' : 'dark:hover:bg-gray-400/20' }, rounded: 'rounded rounded-es-3xl'}" @click="updateLikedReview">
+      <UButton v-if="props.userMovie.user._id !== user.id" size="lg" :color="likedReview ? 'red' : 'gray'" variant="ghost" icon="ic:round-favorite" :ui="{ variant: { ghost: likedReview ? 'dark:hover:bg-red-500/20' : 'dark:hover:bg-gray-400/20' }, rounded: 'rounded rounded-es-3xl'}" @click="updateLikedReview">
         {{ likesCount }}
       </UButton>
+
+      <div v-else class="flex items-center gap-2 p-3 text-red-400 rounded rounded-es-3xl">
+        <UIcon class="w-5 h-5" name="ic:round-favorite"/>
+        
+        <span class="font-medium text-sm">
+          {{ likesCount }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -84,6 +92,7 @@ const props = defineProps<{
   id: string
   userMovie: {
     user: {
+      _id: string
       nickname: string
     }
     movie: {
