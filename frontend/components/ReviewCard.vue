@@ -45,14 +45,14 @@
     </div>
 
     <div class="flex gap-3 items-start justify-between">
-      <div class="flex gap-3 items-center rounded rounded-ee-3xl p-1 pe-3 bg-[#7588E1]/10">
-        <span class="text-lg">
-          😭😂🥰
-        </span>
-
-        <span class="text-xs font-medium">
-          100%
-        </span>
+      <div class="flex items-center rounded rounded-ee-3xl p-1 pe-3 bg-[#7588E1]/10">
+        
+        
+        <UTooltip v-for="emotion in emotions" :key="emotion.description" :text="emotion.description">
+          <span class="text-lg cursor-pointer">
+            {{ emotion.emoji }}
+          </span>
+        </UTooltip>
       </div>
       
       <UButton size="lg" color="red" variant="ghost" icon="ic:round-favorite" :ui="{ variant: { ghost: 'dark:hover:bg-red-500/20'}, rounded: 'rounded rounded-es-3xl'}">
@@ -79,6 +79,10 @@ defineProps<{
   }
   text: string
   likes: number
+  emotions: {
+    emoji: string
+    description: string
+  }[]
 }>()
 
 </script>

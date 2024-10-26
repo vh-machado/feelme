@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const EmotionAnalysisSchema = new mongoose.Schema({
-  idReview: {
+  reviewId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Review",
     required: true,
@@ -16,4 +16,3 @@ const EmotionAnalysisSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("EmotionAnalysis", EmotionAnalysisSchema);
-

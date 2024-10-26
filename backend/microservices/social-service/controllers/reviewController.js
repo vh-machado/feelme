@@ -43,6 +43,49 @@ async function getReviewWithMovieDetails(req, review) {
   }
 }
 
+async function setReviewTextEmotions(req, review) {
+  const token = req.header('x-auth-token');
+  const emotionServiceUrl = `${process.env.EMOTION_SERVICE_URL}/api/emotion-analysis`
+
+  try {
+    await axios.post(emotionServiceUrl, {
+      reviewId: review._id,
+      reviewText: review.text
+    }, {
+      headers: {
+        'x-auth-token': token,
+        accept: 'application/json'
+      },
+    })
+  } catch(e) {
+    console.log('Erro ao utilizar Emotion Analysis Service:', e)
+  }
+}
+
+async function getReviewTextEmotions(req, reviewId) {
+  const token = req.header('x-auth-token');
+  const emotionServiceUrl = `${process.env.EMOTION_SERVICE_URL}/api/emotion-analysis/review/${reviewId}`
+
+  let emotions = []
+
+  try {
+    await axios.get(emotionServiceUrl, {
+      headers: {
+        'x-auth-token': token,
+        accept: 'application/json'
+      },
+    }).then(response => {
+      if (response.status === 200) {
+        emotions = response.data.emotions
+      }
+    }) 
+  } catch(e) {
+    console.log('Erro ao utilizar Emotion Analysis Service:', e)
+  }
+
+  return emotions
+}
+
 exports.getReviews = async (req, res) => {
   try {
     const reviews = await Review.find().populate({
@@ -53,7 +96,9 @@ exports.getReviews = async (req, res) => {
     const reviewWithMovieDetails = []
     
     for(const review of reviews) {
-      reviewWithMovieDetails.push(await getReviewWithMovieDetails(req, review))
+      let reviewDetailed = await getReviewWithMovieDetails(req, review)
+      reviewDetailed['emotions'] = await getReviewTextEmotions(req, review._id)
+      reviewWithMovieDetails.push(reviewDetailed)
     }
     res.status(200).json(reviewWithMovieDetails);
   } catch (err) {
@@ -61,7 +106,6 @@ exports.getReviews = async (req, res) => {
     res.status(500).send("Erro no servidor");
   }
 };
-
 
 exports.getReviewById = async (req, res) => {
   const { id } = req.params;
@@ -72,7 +116,8 @@ exports.getReviewById = async (req, res) => {
       populate: { path: "userId", select: "name nickname email" }
     });
 
-    const reviewWithMovieDetails = await getReviewWithMovieDetails(req, review)
+    let reviewWithMovieDetails = await getReviewWithMovieDetails(req, review)
+    reviewWithMovieDetails['emotions'] = await getReviewTextEmotions(req, review._id)
 
     res.status(200).json(reviewWithMovieDetails);
   } catch (err) {
@@ -106,6 +151,9 @@ exports.saveReview = async (req, res) => {
     });
 
     await review.save();
+
+    setReviewTextEmotions(req, review)
+
     res.status(201).json(review);
   } catch (err) {
     console.error("Erro ao salvar Critíca:", err.message);

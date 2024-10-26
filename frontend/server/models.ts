@@ -22,6 +22,10 @@ export interface UserMovie {
   user: User
 }
 
+export interface Emotion {
+  emoji: string
+  description: string
+}
 export interface Review {
   _id: string
   userMovie: UserMovie
@@ -29,4 +33,5 @@ export interface Review {
   likes: number
   loggedAt: Date
   rewatch: boolean
+  emotions: Emotion[]
 }

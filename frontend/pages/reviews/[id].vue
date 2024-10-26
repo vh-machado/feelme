@@ -18,6 +18,7 @@
       :user-movie="review.userMovie" 
       :text="review.text" 
       :likes="review.likes" 
+      :emotions="review.emotions"
     />
   </div>
 </template>

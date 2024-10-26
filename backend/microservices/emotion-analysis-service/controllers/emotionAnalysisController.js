@@ -13,10 +13,10 @@ async function processQueue() {
   if (processing || requestQueue.length === 0) return;
 
   processing = true;
-  const { reviewText, idReview, res } = requestQueue.shift();
+  const { reviewText, reviewId, res } = requestQueue.shift();
 
   try {
-    const result = await runEmotionAnalysis(reviewText, idReview);
+    const result = await runEmotionAnalysis(reviewText, reviewId);
     res.status(200).json(result);
   } catch (error) {
     console.error("Erro ao processar a análise de emoções:", error.message);
@@ -42,15 +42,13 @@ function formatEmotions(result) {
   }
 }
 
-async function runEmotionAnalysis(reviewText, idReview) {
+async function runEmotionAnalysis(reviewText, reviewId) {
   const prompt = generatePrompt(reviewText);
   const result = await runGemini(prompt);
 
   const emotions = formatEmotions(result);
-  console.log(emotions);
 
-
-  const existingAnalysis = await EmotionAnalysis.findOne({ idReview });
+  const existingAnalysis = await EmotionAnalysis.findOne({ reviewId });
 
   if (existingAnalysis) {
     existingAnalysis.emotions = emotions;
@@ -58,7 +56,7 @@ async function runEmotionAnalysis(reviewText, idReview) {
     return existingAnalysis;
   } else {
     const savedAnalysis = await EmotionAnalysis.create({
-      idReview,
+      reviewId,
       emotions,
     });
     return savedAnalysis;
@@ -66,15 +64,15 @@ async function runEmotionAnalysis(reviewText, idReview) {
 }
 
 async function emotionAnalysis(req, res) {
-  const { reviewText, idReview } = req.body;
-  enqueueRequest({ reviewText, idReview, res });
+  const { reviewText, reviewId } = req.body;
+  enqueueRequest({ reviewText, reviewId, res });
 }
 
-async function getEmotionAnalysisByIdReview(req, res) {
-  const { idReview } = req.params;
+async function getEmotionAnalysisByReviewId(req, res) {
+  const { reviewId } = req.params;
 
   try {
-    const analysis = await EmotionAnalysis.findOne({ idReview });
+    const analysis = await EmotionAnalysis.findOne({ reviewId });
     if (!analysis) return res.status(404).json({ error: "Análise não encontrada." });
 
     res.status(200).json(analysis);
@@ -98,4 +96,4 @@ async function deleteEmotionAnalysisById(req, res) {
   }
 }
 
-module.exports = { emotionAnalysis, getEmotionAnalysisByIdReview, deleteEmotionAnalysisById };
+module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById };
