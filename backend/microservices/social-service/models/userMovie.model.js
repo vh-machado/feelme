@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user.model");
-const Movie = require("../../movie-service/models/movie.model").default;
 
 const UserMovieSchema = new mongoose.Schema({
   movieId: {
