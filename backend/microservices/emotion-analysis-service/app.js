@@ -2,8 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const os = require('os');
+const connectDB = require('./config/database');
 
 
+
+// Conectar ao MongoDB
+connectDB();
 
 
 app.use(express.json({ extended: false }));
@@ -12,7 +16,7 @@ app.use(express.json({ extended: false }));
 app.use('/api', require('./routes/emotionAnalysis'));
 
 
-const PORT = process.env.PORT || 5003;
+const PORT = process.env.PORT || 5004;
 
 
 const getHostName = () => {
