@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 w-full md:w-[950px] justify-self-center p-4 md:p-8">
+  <div class="flex flex-col gap-2 w-full md:w-[950px] justify-self-center px-4 py-8 md:px-0">
     <div class="flex gap-3 items-center w-fit bg-[#BBC1DA]/10 text-2xl font-bold rounded rounded-se-3xl p-3 pe-6">
       <UIcon name="i-mingcute:quill-pen-ai-fill" class="text-indigo-300" />
 

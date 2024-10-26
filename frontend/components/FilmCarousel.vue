@@ -1,11 +1,14 @@
 <template>
-  <div v-if="status === 'pending'" class="flex items-center gap-4 p-4">
-    <USkeleton class="w-full h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+  <div v-if="status === 'pending'" class="flex w-[950px] justify-self-center items-center gap-[10px] py-8">
+    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
   </div>
 
   <template v-else>
     <div class="mx-16">
-      <UCarousel v-slot="{ item }" :items="items" :ui="{ container: 'gap-4 py-8 px-4' }" 
+      <UCarousel v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-fit justify-self-center', container: 'w-[950px] justify-self-center gap-[10px] py-8' }" 
         arrows
         :prev-button="{
           color: 'gray',

@@ -1,6 +1,6 @@
 <template>
   <div class="flex border-b border-slate-600 bg-dark-purple justify-center">
-    <div class="flex w-[950px] items-center justify-between px-8 py-2">
+    <div class="flex w-[950px] gap-5 items-center justify-between py-2">
       <ULink to="/" class="font-k2d font-bold text-2xl">
         Feel<span class="text-indigo-300">me</span>
       </ULink>
@@ -11,6 +11,8 @@
         </template>
       </UHorizontalNavigation>
 
+      <UserDropdown :user-nickname="user.nickname"/>
+
       <UButton v-if="route.name !== 'reviews-new'" color="green" to="/reviews/new" icon="i-mingcute:quill-pen-ai-fill" :ui="{ rounded: 'rounded-e rounded-s-3xl' } ">
         Escrever crítica
       </UButton>
@@ -20,11 +22,8 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-
-import { useAuthStore } from '~/store/auth'
 import { useSessionStore } from '~/store/session'
 
-const { logUserOut } = useAuthStore()
 const { user } = storeToRefs(useSessionStore());
 
 const route = useRoute()
@@ -39,13 +38,6 @@ const links = [
     label: 'Críticas',
     icon: 'i-mingcute:message-3-fill',
     to: '/reviews'
-  }, {
-    label: user.value.nickname,
-    avatar: { src: 'https://avatars.githubusercontent.com/u/73856054?v=4' }
-  }, {
-    label: 'Logout',
-    to: '/login',
-    click: logUserOut
   }]
 ]
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 w-full md:w-[950px] justify-self-center p-4 md:p-8">
+  <div class="flex flex-col gap-2 w-full md:w-[950px] justify-self-center px-4 py-8 md:px-0">
     <div v-if="status === 'pending'" class="flex flex-col gap-4 p-4">
       <div class="flex items-center space-x-4">
         <USkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full', background: 'dark:bg-[#7588E1]/10' }" />
