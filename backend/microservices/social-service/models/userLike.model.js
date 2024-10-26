@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const UserLikeSchema = new mongoose.Schema({
-  idUser: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  idReview: {
+  reviewId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Review",
     required: true,

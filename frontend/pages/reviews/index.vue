@@ -22,15 +22,15 @@
       <USkeleton class="w-full h-[160px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
     </div>
     
-
     <div v-else class="flex flex-col gap-6">
-        <ReviewCard
-          v-for="review in reviews" 
-          :key="review._id"
-          :user-movie="review.userMovie" 
-          :text="review.text" 
-          :likes="review.likes" 
-        />
+      <ReviewCard
+        v-for="review in reviews" 
+        :id="review._id"
+        :key="review._id"
+        :user-movie="review.userMovie" 
+        :text="review.text" 
+        :likes="review.likes" 
+      />
     </div>
   </div>
 </template>

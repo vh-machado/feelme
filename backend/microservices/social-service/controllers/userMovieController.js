@@ -10,14 +10,14 @@ exports.getAllUserReviews = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const userMovies = await UserMovie.find({ idUser: userId }).populate("idMovie", "id").exec();
+    const userMovies = await UserMovie.find({ userId: userId }).populate("movieId", "id").exec();
 
     const userMovieIds = userMovies.map(userMovie => userMovie._id);
 
-    const reviews = await Review.find({ idUserMovie: { $in: userMovieIds } })
+    const reviews = await Review.find({ userMovieId: { $in: userMovieIds } })
       .populate({
-        path: 'idUserMovie',
-        populate: { path: "idMovie", select: "id" }
+        path: 'userMovieId',
+        populate: { path: "movieId", select: "id" }
       })
       .exec();
 
@@ -37,8 +37,8 @@ exports.getUserReviewsByMovie = async (req, res) => {
 
   try {
       const userMovie = await UserMovie.findOne({
-          idUser: userId,
-          idMovie: movieId
+          userId: userId,
+          movieId: movieId
       });
 
       if (!userMovie) {
@@ -59,8 +59,8 @@ exports.getUserReviewsByMovie = async (req, res) => {
 exports.getUserMovies = async (req, res) => {
   try {
     const userMovies = await UserMovie.find()
-      .populate("idMovie")
-      .populate("idUser");
+      .populate("movieId")
+      .populate("userId");
     res.status(200).json(userMovies);
   } catch (err) {
     console.error("Erro ao buscar UserMovies:", err.message);
@@ -69,11 +69,11 @@ exports.getUserMovies = async (req, res) => {
 };
 
 exports.saveUserMovie = async (req, res) => {
-  const { idMovie, idUser, loggedAt, rewatch } = req.body;
+  const { movieId, userId } = req.body;
 
   try {
     const token = req.header('x-auth-token');
-    const movieServiceUrl = `${process.env.MOVIE_SERVICE_URL}/api/movie/${idMovie}`
+    const movieServiceUrl = `${process.env.MOVIE_SERVICE_URL}/api/movie/${movieId}`
 
     const movie = await axios.get(movieServiceUrl, {
       headers: {
@@ -82,7 +82,7 @@ exports.saveUserMovie = async (req, res) => {
       }
     }).then(({ data: movieResponse }) => movieResponse.data)
 
-    const user = await User.findById(idUser);
+    const user = await User.findById(userId);
 
     if (!movie) {
       return res.status(404).json({ msg: "Filme não encontrado" });
@@ -92,10 +92,8 @@ exports.saveUserMovie = async (req, res) => {
     }
 
     const userMovie = new UserMovie({
-      idMovie,
-      idUser,
-      loggedAt,
-      rewatch,
+      movieId,
+      userId
     });
 
     await userMovie.save();
@@ -108,7 +106,7 @@ exports.saveUserMovie = async (req, res) => {
 
 exports.updateUserMovie = async (req, res) => {
   const { id } = req.params;
-  const { idMovie, idUser, loggedAt, rewatch } = req.body;
+  const { movieId, userId, loggedAt, rewatch } = req.body;
 
   try {
     let userMovie = await UserMovie.findById(id);
@@ -117,10 +115,8 @@ exports.updateUserMovie = async (req, res) => {
       return res.status(404).json({ msg: "UserMovie não encontrado" });
     }
 
-    userMovie.idMovie = idMovie || userMovie.idMovie;
-    userMovie.idUser = idUser || userMovie.idUser;
-    userMovie.loggedAt = loggedAt || userMovie.loggedAt;
-    userMovie.rewatch = rewatch !== undefined ? rewatch : userMovie.rewatch;
+    userMovie.movieId = movieId || userMovie.movieId;
+    userMovie.userId = userId || userMovie.userId;
 
     await userMovie.save();
     res.status(200).json(userMovie);

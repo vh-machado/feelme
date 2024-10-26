@@ -10,7 +10,24 @@
       {{ userMovie.user.nickname }}
     </div>
 
-    <div class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
+    <ULink v-if="route.path !== `/reviews/${id}`" :to="`/reviews/${id}`" class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
+      <img 
+        :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
+        class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
+      >
+      
+      <div class="flex flex-col gap-4">
+        <div class="text-xl font-bold">
+          {{ userMovie.movie.title }}
+        </div>
+        
+        <span>
+          {{ text }}
+        </span>
+      </div>
+    </ULink>
+
+    <div v-else class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
         :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
         class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
@@ -47,8 +64,10 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const route = useRoute()
 
 defineProps<{
+  id: string
   userMovie: {
     user: {
       nickname: string

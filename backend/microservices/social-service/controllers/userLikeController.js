@@ -5,7 +5,7 @@ const UserLike = require("../models/userLike.model");
 
 exports.getAllUserLikes = async (req, res) => {
   try {
-    const userLikes = await UserLike.find().populate("idUser", "name").populate("idReview", "text");
+    const userLikes = await UserLike.find().populate("userId", "name").populate("reviewId", "text");
     res.status(200).json(userLikes);
   } catch (err) {
     console.error("Erro ao buscar UserLikes:", err.message);
@@ -17,7 +17,7 @@ exports.getAllUserLikes = async (req, res) => {
 exports.getUserLikeById = async (req, res) => {
   const { id } = req.params;
   try {
-    const userLike = await UserLike.findById(id).populate("idUser", "name").populate("idReview", "text");
+    const userLike = await UserLike.findById(id).populate("userId", "name").populate("reviewId", "text");
     if (!userLike) {
       return res.status(404).json({ msg: "UserLike não encontrado" });
     }
@@ -30,11 +30,11 @@ exports.getUserLikeById = async (req, res) => {
 
 
 exports.createUserLike = async (req, res) => {
-  const { idUser, idReview } = req.body;
+  const { userId, reviewId } = req.body;
 
   try {
-    const user = await User.findById(idUser);
-    const review = await Review.findById(idReview);
+    const user = await User.findById(userId);
+    const review = await Review.findById(reviewId);
 
     if (!user) {
       return res.status(404).json({ msg: "Usuário não encontrado" });
@@ -45,7 +45,7 @@ exports.createUserLike = async (req, res) => {
     }
 
 
-    const userLike = new UserLike({ idUser, idReview });
+    const userLike = new UserLike({ userId, reviewId });
     await userLike.save();
 
 
@@ -62,7 +62,7 @@ exports.createUserLike = async (req, res) => {
 
 exports.updateUserLike = async (req, res) => {
   const { id } = req.params;
-  const { idUser, idReview } = req.body;
+  const { userId, reviewId } = req.body;
 
   try {
     let userLike = await UserLike.findById(id);
@@ -71,22 +71,22 @@ exports.updateUserLike = async (req, res) => {
     }
 
 
-    if (idUser) {
-      const user = await User.findById(idUser);
+    if (userId) {
+      const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ msg: "Usuário não encontrado" });
       }
     }
 
-    if (idReview) {
-      const review = await Review.findById(idReview);
+    if (reviewId) {
+      const review = await Review.findById(reviewId);
       if (!review) {
         return res.status(404).json({ msg: "Review não encontrada" });
       }
     }
 
-    userLike.idUser = idUser || userLike.idUser;
-    userLike.idReview = idReview || userLike.idReview;
+    userLike.userId = userId || userLike.userId;
+    userLike.reviewId = reviewId || userLike.reviewId;
 
     await userLike.save();
     res.status(200).json(userLike);
@@ -97,10 +97,10 @@ exports.updateUserLike = async (req, res) => {
 };
 
 exports.checkUserLikeExists = async (req, res) => {
-  const { idUser, idReview } = req.params;
+  const { userId, reviewId } = req.params;
 
   try {
-    const userLike = await UserLike.findOne({ idUser, idReview });
+    const userLike = await UserLike.findOne({ userId, reviewId });
 
     if (userLike) {
       return res.status(200).json({ exists: true, msg: "UserLike encontrado." });
@@ -124,7 +124,7 @@ exports.deleteUserLike = async (req, res) => {
       return res.status(404).json({ msg: "UserLike não encontrado" });
     }
 
-    const review = await Review.findById(userLike.idReview);
+    const review = await Review.findById(userLike.reviewId);
     if (review) {
       review.likes -= 1;
       await review.save();

@@ -3,23 +3,15 @@ const User = require("./user.model");
 const Movie = require("../../movie-service/models/movie.model").default;
 
 const UserMovieSchema = new mongoose.Schema({
-  idMovie: {
+  movieId: {
     type: Number,
     required: true,
   },
-  idUser: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-  },
-  loggedAt: {
-    type: Date,
-    required: true,
-  },
-  rewatch: {
-    type: Boolean,
-    required: true,
-  },
+  }
 },{ strictPopulate: false });
 
 module.exports = mongoose.model("UserMovie", UserMovieSchema);;
