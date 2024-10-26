@@ -1,10 +1,8 @@
-const mongoose = require("mongoose");
-
-const MovieSchema = new mongoose.Schema({
+const MovieSchema = {
   id: {
-    type: String,
+    type: Number,
     required: true,
   },
-});
+};
 
-module.exports = mongoose.model("Movie", MovieSchema);
+module.exports = MovieSchema

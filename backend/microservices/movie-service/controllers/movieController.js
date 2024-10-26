@@ -1,49 +1,234 @@
-const Movie = require("../models/movie.model");
+const axios = require('axios');
 
-exports.getMovies = async (res) => {
+exports.getMoviesPopular = async (req, res) => {
   try {
-    const movies = await Movie.find();
-    res.status(200).json(movies);
-  } catch (err) {
-    console.error("Erro ao buscar Filmes:", err.message);
-    res.status(500).send("Erro no servidor");
-  }
+    const { language, page } = req.query;
+    const languageParam = language || 'pt-BR'; 
+    const pageParam = page || 1; 
+
+    // URL da API TMDB
+    const url = `https://api.themoviedb.org/3/movie/popular`;
+
+
+    const params = {
+      language: languageParam,
+      page: pageParam,
+    };
+
+
+    const response = await axios.get(url, {
+      params: params,
+      headers: {
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        accept: 'application/json'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Filmes populares obtidos com sucesso",
+      data: response.data
+    });
+  } catch (error) {
+    if (error.response) {
+      console.error('Erro no TMDB:', error.response.status, error.response.data);
+
+      // Responder com o erro retornado pelo TMDB
+      res.status(error.response.status).json({
+        success: false,
+        message: 'Erro ao buscar filmes no TMDB',
+        error: error.response.data
+      });
+
+    } else if (error.request) {
+      console.error('Nenhuma resposta do TMDB:', error.request);
+
+      res.status(500).json({
+        success: false,
+        message: 'Nenhuma resposta da API do TMDB. Por favor, tente novamente.',
+      });
+
+    } else {
+      console.error('Erro ao configurar a requisição:', error.message);
+
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao configurar a requisição. Por favor, tente novamente.',
+        error: error.message
+      });
+    }
+  } 
 };
 
-exports.saveMovie = async (req, res) => {
-  const { id } = req.body;
-
+exports.getMoviesTrending = async (req, res) => {
   try {
-    const movie = new Movie({ id });
+    const { language } = req.query;
+    const { time_window } = req.params || 'week';
+    const languageParam = language || 'pt-BR'; 
 
-    await movie.save();
-    res.status(201).json({ msg: "Filme cadastrado com sucesso!" });
-  } catch (err) {
-    console.error(
-      "Erro no servidor durante o salvamento de Filme:",
-      err.message
-    );
-    res.status(500).send("Erro no servidor");
-  }
+    // URL da API TMDB
+    const url = `https://api.themoviedb.org/3/trending/movie/${time_window}`;
+
+    const params = {
+      language: languageParam,
+    };
+
+
+    const response = await axios.get(url, {
+      params: params,
+      headers: {
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        accept: 'application/json'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Filmes obtidos com sucesso",
+      data: response.data
+    });
+  } catch (error) {
+    if (error.response) {
+      console.error('Erro no TMDB:', error.response.status, error.response.data);
+
+      // Responder com o erro retornado pelo TMDB
+      res.status(error.response.status).json({
+        success: false,
+        message: 'Erro ao buscar filmes no TMDB',
+        error: error.response.data
+      });
+
+    } else if (error.request) {
+      console.error('Nenhuma resposta do TMDB:', error.request);
+
+      res.status(500).json({
+        success: false,
+        message: 'Nenhuma resposta da API do TMDB. Por favor, tente novamente.',
+      });
+
+    } else {
+      console.error('Erro ao configurar a requisição:', error.message);
+
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao configurar a requisição. Por favor, tente novamente.',
+        error: error.message
+      });
+    }
+  } 
 };
 
-exports.delete = async (req, res) => {
-  const { id } = req.params;
+exports.findMovieById = async (movie_id, language) => {
+  const languageParam = language || 'pt-BR';
 
+  const url = `https://api.themoviedb.org/3/movie/${movie_id}`;
+
+  const params = { language : languageParam };
+
+  const response = await axios.get(url, {
+    params,
+    headers: {
+      Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+      accept: 'application/json',
+    },
+  });
+
+  return response
+}
+
+exports.getMovieById = async (req, res) => {
   try {
-    let movie = await Movie.findOne({ id });
+    const { movie_id } = req.params;
+    const { language } = req.query;
+    
+    const response = await this.findMovieById(movie_id, language)
 
-    movie = new Movie({ id });
+    res.status(200).json({
+      success: true,
+      message: "Filme obtido com sucesso",
+      data: response.data
+    });
+  } catch (error) {
+    let errorMessage = ""
 
-    if (!movie) {
-      return res.status(404).json({ msg: "Filme não encontrado para deleção" });
+    if (error.response) {
+      errorMessage = 'Erro no TMDB'
+      console.error(errorMessage, error.response.status, error.response.data)
+    } else if (error.request) {
+      errorMessage = 'Nenhuma resposta do TMDB'
+      console.error(errorMessage, error.request)
+    } else {
+      errorMessage = 'Erro ao configurar a requisição'
+      console.error(errorMessage, error.message)
     }
 
-    await movie.delete();
-    await movie.remove();
-    res.status(200).json({ msg: "Filme deletado com sucesso!" });
-  } catch (err) {
-    console.error("Erro no servidor durante a deleção de Filme:", err.message);
-    res.status(500).send("Erro no servidor");
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
+};
+
+exports.getMovieBySearch = async (req, res) => {
+  try {
+    const {query, include_adult, language, page } = req.query;
+    const queryParam = query || ''; 
+    const include_adultParam = include_adult || false; 
+    const languageParam = language || 'pt-BR'; 
+    const pageParam = page || 1; 
+
+
+    // URL da API TMDB
+    const url = `https://api.themoviedb.org/3/search/movie`;
+
+    const params = {
+      query: queryParam,
+      include_adult: include_adultParam,
+      language: languageParam,
+      page: pageParam,
+    };
+
+
+    const response = await axios.get(url, {
+      params: params,
+      headers: {
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`, // Use o token da API do TMDB
+        accept: 'application/json'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Filme(s) pesquisado(s) obtidos com sucesso",
+      data: response.data
+    });
+  } catch (error) {
+    if (error.response) {
+      console.error('Erro no TMDB:', error.response.status, error.response.data);
+
+      // Responder com o erro retornado pelo TMDB
+      res.status(error.response.status).json({
+        success: false,
+        message: 'Erro ao buscar filmes no TMDB',
+        error: error.response.data
+      });
+
+    } else if (error.request) {
+      console.error('Nenhuma resposta do TMDB:', error.request);
+
+      res.status(500).json({
+        success: false,
+        message: 'Nenhuma resposta da API do TMDB. Por favor, tente novamente.',
+      });
+
+    } else {
+      console.error('Erro ao configurar a requisição:', error.message);
+
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao configurar a requisição. Por favor, tente novamente.',
+        error: error.message
+      });
+    }
+  } 
 };
