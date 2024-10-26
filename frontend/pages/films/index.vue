@@ -23,12 +23,14 @@
 
     <div class="flex w-[950px] flex-col gap-4 justify-center mt-4" v-if="status !== 'pending'">
       <div v-if="paginatedItems.length > 0">
-        <div v-for="(item, index) in paginatedItems" :key="index" class="flex items-center gap-4">
-          <img :src="item.poster" draggable="false"
-            class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
-          <div class="flex flex-row justify-between h-[345px] text-right">
-            <p class="text-lg font-bold">{{ item.title }}, {{ item.year }}</p>
-          </div>
+        <div v-for="(item, index) in paginatedItems" :key="index">
+          <ULink :to="'/films/'+item.id" class="flex items-center gap-4 py-4">
+            <img :src="item.poster" draggable="false"
+              class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
+            <div class="flex flex-row justify-between h-[345px] text-right">
+              <p class="text-lg font-bold">{{ item.title }}, {{ item.year }}</p>
+            </div>
+          </ULink>
         </div>
 
         <UPagination
@@ -59,7 +61,7 @@ const router = useRouter()
 
 const status = ref<string>('pending')
 const config = useRuntimeConfig()
-const items = ref<{ poster: string, title: string, year: string }[]>([])
+const items = ref<{ id: number, poster: string, title: string, year: string }[]>([])
 const page = ref(1)
 const totalResults = ref(0) 
 const itemsPerPage = 10 
@@ -75,7 +77,7 @@ interface MovieResponse {
   success: boolean
   message: string
   data: {
-    results: { poster_path: string, title: string, release_date: string }[]
+    results: { id: number, poster_path: string, title: string, release_date: string }[]
     total_pages: number 
     total_results: number 
   }
@@ -118,12 +120,13 @@ const search = async (event: FormSubmitEvent<SeacrhSchema>) => {
 }
 
 
-function setPosters(movies: { poster_path: string, title: string, release_date: string }[]) {
+function setPosters(movies: { id: number, poster_path: string, title: string, release_date: string }[]) {
   items.value = [] 
   for (let i = 0; i < Math.min(movies.length, itemsPerPage); i++) {
     const movie = movies[i];
     const year = new Date(movie.release_date).getFullYear().toString()
     items.value.push({
+      id: movie.id,
       poster: `${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`,
       title: movie.title,
       year: year
@@ -131,7 +134,7 @@ function setPosters(movies: { poster_path: string, title: string, release_date: 
   }
 }
 
-function paginateItems(items: { poster: string, title: string, year: string }[], currentPage: number) {
+function paginateItems(items: { id: number, poster: string, title: string, year: string }[], currentPage: number) {
   const start = (currentPage - 1) * itemsPerPage
   const end = start + itemsPerPage
   return items.slice(start, end)
