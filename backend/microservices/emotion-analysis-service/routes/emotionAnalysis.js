@@ -3,7 +3,6 @@ const { emotionAnalysis } = require('../controllers/emotionAnalysisController');
 
 const router = express.Router();
 
-
-router.post('/emotionAnalysis', emotionAnalysis);
+router.post('/emotion-analysis', emotionAnalysis);
 
 module.exports = router;

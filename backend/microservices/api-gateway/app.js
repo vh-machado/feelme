@@ -106,9 +106,9 @@ app.use('/movie-service', createProxyMiddleware({
     },
 }));
 
-app.use('/gemini-service', createProxyMiddleware({
+app.use('/emotion-service', createProxyMiddleware({
     target: process.env.EMOTION_SERVICE_URL, 
-    pathRewrite: { '^/gemini-service': '' }, 
+    pathRewrite: { '^/emotion-service': '' }, 
     changeOrigin: true,
     logger: console,
     on: {
