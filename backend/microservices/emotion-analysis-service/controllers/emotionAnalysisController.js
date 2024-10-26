@@ -1,5 +1,6 @@
 const { runGemini } = require("../utils/gemini.js");
 const EmotionAnalysis = require("../models/emotionAnalysis.js");
+const { formatEmojiEmotion } = require("../utils/formatEmojiEmotion.js");
 
 let requestQueue = [];
 let processing = false;
@@ -28,7 +29,7 @@ async function processQueue() {
 }
 
 function generatePrompt(review) {
-  return `Retorne somente e nada mais além que um objeto json com um array com apenas as emoções identificadas nesse texto: '${review}'. Cada emoção deve conter um campo "emoji" com um emoji representativo e um campo "description" com a descrição. Use somente esta lista de emoções: Alegria, Tristeza, Raiva, Medo, Surpresa, Nojo, Satisfação, Ansiedade, Decepção, Dúvida, Frustração, Vergonha, Desespero, Entusiasmo, Alívio, Desânimo, Culpa, Indiferença, Inveja e Luto.`;
+  return `Retorne somente e nada mais além que um objeto json com um array com apenas as emoções identificadas nesse texto: '${review}'. Resuma cada emoção com uma palavra, não faça nenhuma explicação. Use somente essa lista de emoções: Alegria, Tristeza, Raiva, Medo, Surpresa, Nojo, Satisfação, Ansiedade, Decepção, Dúvida, Frustração, Vergonha, Desespero, Entusiasmo, Alívio, Desânimo, Culpa, Indiferença, Inveja e Luto. O objeto deve conter os atributos emotions, que será o array com as emoções em string, e approval, que é um score numérico para o texto utilizando a classificação Naive Bayes.`;
 }
 
 function formatEmotions(result) {
@@ -46,7 +47,7 @@ async function runEmotionAnalysis(reviewText, reviewId) {
   const prompt = generatePrompt(reviewText);
   const result = await runGemini(prompt);
 
-  const emotions = formatEmotions(result);
+  const emotions = formatEmojiEmotion(formatEmotions(result).emotions);
 
   const existingAnalysis = await EmotionAnalysis.findOne({ reviewId });
 

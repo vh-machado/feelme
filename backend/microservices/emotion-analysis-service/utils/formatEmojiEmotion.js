@@ -1,4 +1,4 @@
-function formatEmotion(emotions) {
+function formatEmojiEmotion(emotions) {
   const emotionEmojis = {
     'Alegria': '🤩',
     'Tristeza': '😢',
@@ -24,8 +24,6 @@ function formatEmotion(emotions) {
 
   const formattedEmotions = []
 
-  console.log(emotions)
-
   for (const emotion of emotions) {
     formattedEmotions.push({ emoji: emotionEmojis[emotion], description: emotion })
   }
@@ -33,4 +31,4 @@ function formatEmotion(emotions) {
   return formattedEmotions
 }
 
-module.exports = { formatEmotion };
+module.exports = { formatEmojiEmotion };
