@@ -16,5 +16,8 @@ export default defineNuxtConfig({
       tmdbImageBaseUrl: '',
       tmdbApiKey: '',
     }
+  },
+  colorMode: {
+    preference: 'dark'
   }
 })

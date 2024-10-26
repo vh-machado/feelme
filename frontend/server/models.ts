@@ -1,5 +1,5 @@
 export interface User {
-  id: string
+  _id: string
   name: string
   nickname: string
   email: string
@@ -7,17 +7,31 @@ export interface User {
   userRole: string
 }
 
-export interface UserMovie {
-  id: string
-  idMovie: number
-  user: User
-  loggedAt: Date
-  rewatch: boolean
+export interface Movie {
+  id: number
+  backdropPath: string
+  title: string
+  overview: string
+  posterPath: string
+  releaseDate: string
 }
 
+export interface UserMovie {
+  _id: string
+  movie: Movie
+  user: User
+}
+
+export interface Emotion {
+  emoji: string
+  description: string
+}
 export interface Review {
-  id: string
+  _id: string
   userMovie: UserMovie
   text: string
   likes: number
+  loggedAt: Date
+  rewatch: boolean
+  emotions: Emotion[]
 }

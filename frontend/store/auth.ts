@@ -30,25 +30,25 @@ export const useAuthStore = defineStore('auth', {
       this.loading = status.value === 'pending'
 
       if (status.value === 'success') {
-        const token = useCookie('authToken');
+        const authToken = useCookie<string>('authToken');
 
-        token.value = JSON.stringify(data.value);
+        authToken.value = JSON.stringify(data.value.token);
 
         const { createSession } = useSessionStore()
-        createSession(token.value)
+        createSession(authToken.value)
 
         this.authenticated = true;
       }
     },
 
     logUserOut() {
-      const token = useCookie('authToken');
+      const authToken = useCookie<string>('authToken');
       
       const { removeSession } = useSessionStore()
       removeSession()
 
       this.authenticated = false;
-      token.value = null;
+      authToken.value = null;
     }
   },
 });
