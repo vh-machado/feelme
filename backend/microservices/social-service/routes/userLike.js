@@ -5,7 +5,8 @@ const {
   createUserLike, 
   updateUserLike,
   checkUserLikeExists, 
-  deleteUserLike
+  deleteUserLike,
+  deleteUserLikeByReview
 } = require('../controllers/userLikeController');
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.post('/userLike', createUserLike);
 router.get('/userLike/exists/:userId/:reviewId', checkUserLikeExists);
 router.put('/userLike/:id', updateUserLike);
 router.delete('/userLike/:id', deleteUserLike);
+router.delete('/userLike/review/:reviewId', deleteUserLikeByReview);
 
 module.exports = router;

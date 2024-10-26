@@ -27,6 +27,7 @@
       </div>
     </ULink>
 
+
     <div v-else class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
         :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
@@ -45,28 +46,41 @@
     </div>
 
     <div class="flex gap-3 items-start justify-between">
-      <div class="flex items-center rounded rounded-ee-3xl p-1 pe-3 bg-[#7588E1]/10">
+      <div class="rounded rounded-ee-3xl p-1 pe-3 bg-[#7588E1]/10">
+        <div v-if="emotions.length > 0" class="flex items-center ">
+          <UTooltip v-for="emotion in emotions" :key="emotion.description" :text="emotion.description">
+            <span class="text-lg cursor-pointer">
+              {{ emotion.emoji }}
+            </span>
+          </UTooltip>
+        </div>
         
-        
-        <UTooltip v-for="emotion in emotions" :key="emotion.description" :text="emotion.description">
-          <span class="text-lg cursor-pointer">
-            {{ emotion.emoji }}
-          </span>
-        </UTooltip>
+        <div v-else class="flex gap-3 items-center text-xs p-2">
+          <USkeleton class="h-4 w-4" :ui="{ rounded: 'rounded-full', background: 'dark:bg-indigo-400' }" />
+
+          Analisando emoções
+        </div>
       </div>
       
-      <UButton size="lg" color="red" variant="ghost" icon="ic:round-favorite" :ui="{ variant: { ghost: 'dark:hover:bg-red-500/20'}, rounded: 'rounded rounded-es-3xl'}">
-        {{ likes }}
+      <UButton size="lg" :color="likedReview ? 'red' : 'gray'" variant="ghost" icon="ic:round-favorite" :ui="{ variant: { ghost: likedReview ? 'dark:hover:bg-red-500/20' : 'dark:hover:bg-gray-400/20' }, rounded: 'rounded rounded-es-3xl'}" @click="updateLikedReview">
+        {{ likesCount }}
       </UButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useSessionStore } from '~/store/session'
+
+const { user } = storeToRefs(useSessionStore());
+
 const config = useRuntimeConfig()
 const route = useRoute()
 
-defineProps<{
+const toast = useToast()
+
+const props = defineProps<{
   id: string
   userMovie: {
     user: {
@@ -84,5 +98,59 @@ defineProps<{
     description: string
   }[]
 }>()
+
+const likedReview = ref<boolean>(false)
+const likesCount = ref<number>(props.likes)
+
+await useSocialService(`userLike/exists/${user.value.id}/${props.id}`, {
+  method: 'GET',
+  onResponse({ response }) {
+    if(response.status === 200) {
+      likedReview.value = response._data.exists
+    }
+  }
+})
+
+async function updateLikedReview() {
+  if(likedReview.value) {
+    await useSocialService(`userLike/review/${props.id}`, {
+      method: 'DELETE',
+      onResponse({ response }) {
+        if(response.status === 200) {
+          likedReview.value = false
+          likesCount.value--
+        } else {
+          toast.add({ 
+            title: 'Não foi possível descurtir a crítica!',
+            description: response._data.msg,
+            color: 'red', 
+            icon: 'i-mingcute-unhappy-fill'
+          })
+        }
+      }
+    })
+  } else {
+    await useSocialService('userLike', {
+      method: 'POST',
+      body: {
+        userId: user.value.id,
+        reviewId: props.id
+      },
+      onResponse({ response }) {
+        if(response.status !== 200) {
+          likedReview.value = true
+          likesCount.value++
+        } else {
+          toast.add({ 
+            title: 'Não foi possível curtir a crítica!',
+            description: response._data.msg,
+            color: 'red', 
+            icon: 'i-mingcute-unhappy-fill'
+          })
+        }
+      }
+    })
+  }
+}
 
 </script>

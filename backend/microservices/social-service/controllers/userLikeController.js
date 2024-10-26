@@ -103,17 +103,19 @@ exports.checkUserLikeExists = async (req, res) => {
     const userLike = await UserLike.findOne({ userId, reviewId });
 
     if (userLike) {
-      return res.status(200).json({ exists: true, msg: "UserLike encontrado." });
+      return res.status(200).json({ 
+        _id: userLike._id, 
+        exists: true, 
+        msg: "UserLike encontrado." 
+      });
     } else {
-      return res.status(404).json({ exists: false, msg: "UserLike não encontrado." });
+      return res.status(200).json({ exists: false, msg: "UserLike não encontrado." });
     }
   } catch (err) {
     console.error("Erro ao verificar UserLike:", err.message);
     res.status(500).send("Erro no servidor");
   }
 };
-
-
 
 exports.deleteUserLike = async (req, res) => {
   const { id } = req.params;
@@ -125,6 +127,29 @@ exports.deleteUserLike = async (req, res) => {
     }
 
     const review = await Review.findById(userLike.reviewId);
+    if (review) {
+      review.likes -= 1;
+      await review.save();
+    }
+
+    await userLike.deleteOne();
+    res.status(200).json({ msg: "UserLike deletado com sucesso" });
+  } catch (err) {
+    console.error("Erro ao deletar UserLike:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
+
+exports.deleteUserLikeByReview = async (req, res) => {
+  const { reviewId } = req.params;
+
+  try {
+    const userLike = await UserLike.findOne({ reviewId });
+    if (!userLike) {
+      return res.status(404).json({ msg: "UserLike não encontrado" });
+    }
+
+    const review = await Review.findById(reviewId);
     if (review) {
       review.likes -= 1;
       await review.save();

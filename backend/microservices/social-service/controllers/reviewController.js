@@ -34,7 +34,7 @@ async function getReviewWithMovieDetails(req, review) {
         releaseDate: movieData.release_date
       },
       user: {
-        _id: review.userMovieId._id,
+        _id: review.userMovieId.userId._id,
         name: review.userMovieId.userId.name,
         nickname: review.userMovieId.userId.nickname,
         email: review.userMovieId.userId.email
