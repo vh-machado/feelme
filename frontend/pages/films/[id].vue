@@ -1,6 +1,5 @@
 <template>
   <div v-if="movieDetails">
-    <!-- Imagem de fundo sem efeito de desfoque -->
     <div class="relative mb-4">
       <img 
         :src="movieDetails.backdrop_path" 
