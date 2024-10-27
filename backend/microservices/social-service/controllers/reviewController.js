@@ -45,7 +45,7 @@ async function getReviewWithMovieDetails(req, review) {
 
 async function setReviewTextEmotions(req, review) {
   const token = req.header('x-auth-token');
-  const emotionServiceUrl = `${process.env.EMOTION_SERVICE_URL}/api/emotion-analysis`
+  const emotionServiceUrl = `${process.env.EMOTION_ANALYSIS_SERVICE_URL}/api/emotion-analysis`
 
   try {
     await axios.post(emotionServiceUrl, {
@@ -57,14 +57,14 @@ async function setReviewTextEmotions(req, review) {
         accept: 'application/json'
       },
     })
-  } catch(e) {
+  } catch (e) {
     console.log('Erro ao utilizar Emotion Analysis Service:', e)
   }
 }
 
 async function getReviewTextEmotions(req, reviewId) {
   const token = req.header('x-auth-token');
-  const emotionServiceUrl = `${process.env.EMOTION_SERVICE_URL}/api/emotion-analysis/review/${reviewId}`
+  const emotionServiceUrl = `${process.env.EMOTION_ANALYSIS_SERVICE_URL}/api/emotion-analysis/review/${reviewId}`
 
   let emotions = []
 
@@ -78,8 +78,8 @@ async function getReviewTextEmotions(req, reviewId) {
       if (response.status === 200) {
         emotions = response.data.emotions
       }
-    }) 
-  } catch(e) {
+    })
+  } catch (e) {
     console.log('Erro ao utilizar Emotion Analysis Service:', e)
   }
 
@@ -94,8 +94,8 @@ exports.getReviews = async (req, res) => {
     });
 
     const reviewWithMovieDetails = []
-    
-    for(const review of reviews) {
+
+    for (const review of reviews) {
       let reviewDetailed = await getReviewWithMovieDetails(req, review)
       reviewDetailed['emotions'] = await getReviewTextEmotions(req, review._id)
       reviewWithMovieDetails.push(reviewDetailed)
@@ -127,7 +127,7 @@ exports.getReviewById = async (req, res) => {
 };
 
 exports.saveReview = async (req, res) => {
-  const { id, userId, movieId , text, likes, loggedAt, rewatch } = req.body;
+  const { id, userId, movieId, text, likes, loggedAt, rewatch } = req.body;
 
   try {
     let userMovie = await UserMovie.findOne({ userId, movieId });
@@ -137,7 +137,7 @@ exports.saveReview = async (req, res) => {
         movieId,
         userId
       });
-  
+
       await userMovie.save();
     }
 
