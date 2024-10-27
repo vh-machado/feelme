@@ -1,8 +1,12 @@
 <template>
   <div class="flex border-b border-slate-600 bg-dark-purple justify-center">
     <div class="flex w-[950px] gap-5 items-center justify-between py-2">
-      <ULink to="/" class="font-k2d font-bold text-2xl">
-        Feel<span class="text-indigo-300">me</span>
+      <ULink to="/" class="flex items-center gap-4 font-k2d font-bold text-2xl">
+        <img src="/assets/feelme-logo.png" class="h-5 ">
+        
+        <div>
+          Feel<span class="text-indigo-300">me</span>
+        </div>
       </ULink>
       
       <UHorizontalNavigation :links="links" class="px-4" :ui="{ active:'dark:after:bg-indigo-300' , before: 'dark:hover:before:bg-neutral-900/20' }">
