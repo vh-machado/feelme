@@ -27,7 +27,6 @@
 
 import type { Review } from '~/server/models';
 
-const config = useRuntimeConfig()
 const route = useRoute()
 
 const toast = useToast()

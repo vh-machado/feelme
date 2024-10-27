@@ -5,7 +5,7 @@
         :src="movieDetails.backdrop_path" 
         alt="Backdrop do Filme" 
         class="fixed-backdrop" 
-      />
+      >
     </div>
 
     <div class="flex flex-col items-center gap-4 p-4">
@@ -30,7 +30,7 @@
           :src="movieDetails.posterUrl" 
           alt="Poster do Filme" 
           class="w-64 h-auto rounded-lg ml-4" 
-        />
+        >
       </div>
 
       <p class="italic text-gray-500 mt-4">“{{ movieDetails.tagline }}”</p>
@@ -49,6 +49,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useMovieServiceFetch } from '~/composables/useMovieService';
 
 interface MovieDetails {
   title: string
@@ -102,8 +103,8 @@ async function fetchMovieDetails() {
         runtime: movieData.runtime,
         vote_average: movieData.vote_average,
         genres: movieData.genres,
-        posterUrl: `${config.public.tmdbImageBaseUrl}w500${movieData.poster_path}`,
-        backdrop_path: `${config.public.tmdbImageBaseUrl}original${movieData.backdrop_path}`,
+        posterUrl: `${config.public.tmdbImageBaseUrl}/w500${movieData.poster_path}`,
+        backdrop_path: `${config.public.tmdbImageBaseUrl}/original${movieData.backdrop_path}`,
         production_companies: movieData.production_companies,
         tagline: movieData.tagline,
         budget: movieData.budget,
