@@ -1,5 +1,5 @@
 <template>
-  <div v-if="status === 'pending'" class="flex w-[950px] justify-self-center items-center gap-[10px] py-8">
+  <div v-if="status === 'pending'" class="flex w-full justify-center justify-self-center items-center gap-[10px] py-8">
     <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
     <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
     <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
