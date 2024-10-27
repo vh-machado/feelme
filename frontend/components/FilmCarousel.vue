@@ -7,7 +7,7 @@
   </div>
 
   <template v-else>
-    <div class="mx-16 justify-center">
+    <div class="flex mx-16 justify-center">
       <UCarousel 
         v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-fit justify-self-center', container: 'w-[950px] justify-self-center gap-[10px] py-8' }" 
         arrows
@@ -24,7 +24,7 @@
       >
         <div>
           <img
-:src="item" draggable="false"
+            :src="item" draggable="false"
             class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
         </div>
       </UCarousel>
