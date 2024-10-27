@@ -1,13 +1,13 @@
 <template>
   <div v-if="status === 'pending'" class="flex w-full justify-center justify-self-center items-center gap-[10px] py-8">
-    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
-    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
-    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
-    <USkeleton class="w-[230px] h-[345px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
+    <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
   </div>
 
   <template v-else>
-    <div class="flex mx-16 justify-center">
+    <div class="hidden lg:flex mx-16 justify-center">
       <UCarousel 
         v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-fit justify-self-center', container: 'w-[950px] justify-self-center gap-[10px] py-8' }" 
         arrows
@@ -22,11 +22,23 @@
           class: '-right-12'
         }"
       >
-        <div>
+        <ULink :to="`films/${item.id}`">
           <img
-            :src="item" draggable="false"
+            :src="item.poster_path" draggable="false"
             class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
-        </div>
+        </ULink>
+      </UCarousel>
+    </div>
+
+    <div class="flex lg:hidden justify-center">
+      <UCarousel 
+        v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-full justify-self-center', container: 'w-full py-8 pe-3' }" 
+      >
+        <ULink :to="`films/${item.id}`" class="ml-3">
+          <img
+            :src="item.poster_path" draggable="false"
+            class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-700">
+        </ULink>
       </UCarousel>
     </div>
   </template>
@@ -35,6 +47,7 @@
 <script setup lang="ts">
 
 interface Movie {
+  id: string
   poster_path: string
 }
 
@@ -51,7 +64,7 @@ interface MovieResponse {
 
 const config = useRuntimeConfig()
 
-const items = ref<string[]>([])
+const items = ref<Movie[]>([])
 
 const { status } = await useMovieService<MovieResponse>('trending/movie/week', {
   method: 'GET',
@@ -69,7 +82,10 @@ const { status } = await useMovieService<MovieResponse>('trending/movie/week', {
 
 function setPosters(movies: Movie[]) {
   for (const movie of movies) {
-    items.value.push(`${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`)
+    items.value.push({
+      id: movie.id,
+      poster_path: `${config.public.tmdbImageBaseUrl}/w500/${movie.poster_path}`
+    })
   }
 }
 </script>

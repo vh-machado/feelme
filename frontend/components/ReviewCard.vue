@@ -13,15 +13,15 @@
     <ULink v-if="route.path !== `/reviews/${id}`" :to="`/reviews/${id}`" class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
         :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
-        class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
+        class="w-[70px] lg:w-[105px] h-[105px] lg:h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
       >
       
       <div class="flex flex-col gap-4">
-        <div class="text-xl font-bold">
+        <div class="text-sm lg:text-xl font-bold">
           {{ userMovie.movie.title }}
         </div>
         
-        <span>
+        <span class="text-xs lg:text-base break-all">
           {{ text }}
         </span>
       </div>
@@ -31,15 +31,15 @@
     <div v-else class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
         :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
-        class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
+        class="w-[70px] lg:w-[105px] h-[105px] lg:h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
       >
       
       <div class="flex flex-col gap-4">
-        <div class="text-xl font-bold">
+        <div class="text-sm lg:text-xl font-bold">
           {{ userMovie.movie.title }}
         </div>
         
-        <span>
+        <span class="text-xs lg:text-base break-all">
           {{ text }}
         </span>
       </div>
@@ -49,7 +49,7 @@
       <div class="rounded rounded-ee-3xl p-1 pe-3 bg-[#7588E1]/10">
         <div v-if="emotions.length > 0" class="flex items-center ">
           <UTooltip v-for="emotion in emotions" :key="emotion.description" :text="emotion.description">
-            <span class="text-lg cursor-pointer">
+            <span class="lg:text-lg cursor-pointer">
               {{ emotion.emoji }}
             </span>
           </UTooltip>

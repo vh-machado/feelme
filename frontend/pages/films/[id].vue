@@ -1,51 +1,85 @@
 <template>
-  <div v-if="movieDetails">
-    <div class="relative mb-4">
-      <img 
-        :src="movieDetails.backdrop_path" 
-        alt="Backdrop do Filme" 
-        class="fixed-backdrop" 
-      >
-    </div>
+  <div v-if="movieDetails" class="flex flex-col relative items-center px-4 pb-20 lg:px-0 lg:pb-0">
+    <img 
+      :src="movieDetails.backdrop_path" 
+      alt="Backdrop do Filme" 
+      class="h-auto lg:h-[400px] w-full lg:w-[950px] object-cover object-center rounded-b-3xl shadow-xl" 
+    >
 
-    <div class="flex flex-col items-center gap-4 p-4">
-      <div class="flex justify-between items-start w-full bg-gray bg-opacity-100 rounded-lg shadow-lg p-4">
-        <div class="flex flex-col">
-          <h1 class="text-2xl font-bold">{{ movieDetails.title }}</h1>
-          <p><strong>Produção:</strong> {{ movieDetails.production_companies.map(company => company.name).join(', ') }}</p>
-          <div class="flex justify-between w-full">
-            <p>
-              <strong>Data de Lançamento:</strong> 
-              {{ formatDate(movieDetails.release_date) }} | {{ movieDetails.runtime }} mins
-            </p>
+    <div class="flex w-full lg:w-[950px] gap-8 lg:gap-12 py-8 lg:py-12">
+      <div class="flex flex-col gap-6 lg:gap-10 w-full">
+        <div class="flex gap-3">
+          <div class="flex flex-col gap-2 lg:gap-4 w-full">
+            <h1 class="text-xl lg:text-2xl font-bold">{{ movieDetails.title }}</h1>
+    
+            <div class="flex flex-col lg:flex-row gap-2 lg:gap-5">
+              <div class="flex gap-2 text-sm">
+                <UIcon name="i-mingcute:calendar-line" class="w-5 h-5 text-indigo-400" />
+                
+                {{ formatDate(movieDetails.release_date) }}
+              </div>
+              
+              <div class="flex gap-2 text-sm">
+                <UIcon name="i-mingcute:time-line" class="w-5 h-5 text-indigo-400" />
+                
+                {{ movieDetails.runtime }} mins
+              </div>
+            </div>
           </div>
-          <p>
-            <strong>Gêneros:</strong> 
-            {{ movieDetails.genres.map(genre => genre.name).join(', ') }}
-          </p>
-          <p class="mt-2"> <strong>Sinopse:</strong> {{ movieDetails.overview }}</p>
-          <p class="font-bold mt-2">Nota Média: {{ movieDetails.vote_average }}</p>
+
+          <img 
+              :src="movieDetails.posterUrl" 
+              alt="Poster do Filme" 
+              class="lg:hidden w-[105px] h-[157.5px] -mt-16 me-5 object-cover object-center rounded border-[1px] border-neutral-700 shadow-xl" 
+            >
         </div>
+
+        <div class="flex flex-col gap-4 w-full">
+          <p v-if="movieDetails.tagline" class="italic text-gray-500">{{ movieDetails.tagline.toUpperCase() }}</p>
+          
+          <p class="text-sm lg:text-base">{{ movieDetails.overview }}</p>
+
+          <div class="flex flex-wrap gap-3 text-sm">
+            <div v-for="genre in movieDetails.genres" :key="genre.name" class="bg-[#7588E1]/10 py-2 px-5 rounded-lg">
+              {{ genre.name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4 w-full">
+          <div class="flex flex-col text-sm">
+            <strong>Produção</strong>
+
+            {{ movieDetails.production_companies.map(company => company.name).join(', ') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden lg:flex flex-col shrink-0 gap-4">
         <img 
           :src="movieDetails.posterUrl" 
           alt="Poster do Filme" 
-          class="w-64 h-auto rounded-lg ml-4" 
+          class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700 shadow-xl" 
         >
-      </div>
 
-      <p class="italic text-gray-500 mt-4">“{{ movieDetails.tagline }}”</p>
-
-      <div class="flex w-1/6 flex-col justify-center items-center gap-4 px-4">
-        <UButton block type="submit" color="green" size="lg" class="font-semibold">
+        <UButton block :to="`/reviews/new?movie=${route.params.id}`" color="indigo" size="lg" class="font-semibold" icon="i-mingcute:quill-pen-ai-fill">
           Escrever crítica
         </UButton>
       </div>
     </div>
+
+    <div class="fixed lg:hidden rounded-t-lg p-2 bottom-0 left-0 right-0 flex w-full bg-dark-purple">
+      <UButton block :to="`/reviews/new?movie=${route.params.id}`" color="indigo" size="md" class="relative font-semibold" icon="i-mingcute:quill-pen-ai-fill">
+        Escrever crítica
+      </UButton>
+    </div>
   </div>
-  <div v-else>
-    <p>Carregando...</p>
+
+  <div v-else class="flex w-full">
+    <USkeleton class="flex w-full h-[400 px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -72,7 +106,7 @@ const config = useRuntimeConfig()
 const movieDetails = ref<MovieDetails | null>(null)
 
 async function fetchMovieDetails() {
-  console.log("Fetching movie details for movie ID:", movieId)
+  console.log("Fetching movie details for movie")
   
   try {
     const response = await useMovieServiceFetch<{ 
@@ -110,7 +144,7 @@ async function fetchMovieDetails() {
         budget: movieData.budget,
         revenue: movieData.revenue
       }
-      console.log("Movie details loaded:", movieDetails.value)
+      console.log("Movie details loaded")
     } else {
       console.warn("Movie data not found or success is false")
     }
@@ -120,20 +154,14 @@ async function fetchMovieDetails() {
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('pt-BR')
+  return new Date(dateString).toLocaleDateString('pt-BR', { 
+    day: 'numeric', 
+    month: 'short',
+    year: 'numeric'
+  })
 }
 
 onMounted(() => {
   fetchMovieDetails()
 })
 </script>
-
-<style scoped>
-
-.fixed-backdrop {
-  width: 100%; 
-  height: 400px; 
-  object-fit: cover; 
-  object-position: center; 
-}
-</style>

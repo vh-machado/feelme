@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-2 w-full md:w-[950px] justify-self-center px-4 py-8 md:px-0">
-    <div class="flex gap-3 items-center w-fit bg-[#BBC1DA]/10 text-2xl font-bold rounded rounded-se-3xl p-3 pe-6">
+    <div class="flex gap-3 items-center w-fit bg-[#BBC1DA]/10 text-lg lg:text-2xl font-bold rounded rounded-se-3xl p-3 pe-6">
       <UIcon name="i-mingcute:quill-pen-ai-fill" class="text-indigo-300" />
 
       Nova Review
@@ -27,11 +27,11 @@
     <div v-if="selectedMovie" class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
       <img 
         :src="`${config.public.tmdbImageBaseUrl}/w500${selectedMovie.posterPath}`" draggable="false"
-        class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
+        class="w-[70px] lg:w-[105px] h-[105px] lg:h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
       >
       
       <div class="flex flex-col gap-4 w-full">
-        <div class="text-xl font-bold">
+        <div class="lg:text-xl font-bold">
           {{ selectedMovie.label }}
         </div>
         
@@ -56,6 +56,7 @@ import { storeToRefs } from 'pinia'
 import { useSessionStore } from '~/store/session'
 
 const toast = useToast()
+const route = useRoute()
 
 const { user } = storeToRefs(useSessionStore());
 
@@ -72,6 +73,10 @@ interface SearchedMovie {
 
 const selectedMovie = ref<SearchedMovie>()
 const reviewPostRequest = ref({ status: null })
+
+if (route.query.movie) {
+  setSelectedMovieFromPath(String(route.query.movie))
+}
 
 const groups = [{
   key: 'movies',
@@ -106,6 +111,21 @@ const groups = [{
     return movies
   }
 }]
+
+async function setSelectedMovieFromPath(movieId: string) {
+  await useMovieService(`movie/${movieId}`, {
+    method: 'GET',
+    query: { language: 'pt-BR', page: '1' },
+    transform: (response) => {
+      selectedMovie.value = {
+        id: response.data.id,
+        label: response.data.title,
+        suffix: response.data.release_date.split('-')[0],
+        posterPath: `${config.public.tmdbImageBaseUrl}/w500/${response.data.poster_path}`
+      }
+    }
+  })
+}
 
 async function submitReview() {
   reviewPostRequest.value = await useSocialService('review', {
