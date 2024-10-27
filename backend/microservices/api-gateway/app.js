@@ -49,7 +49,7 @@ app.use('/auth-service', createProxyMiddleware({
 }));
 
 app.use('/social-service', createProxyMiddleware({
-    target: process.env.USER_SERVICE_URL, // URL do serviço de autenticação
+    target: process.env.SOCIAL_SERVICE_URL, // URL do serviço de autenticação
     pathRewrite: { '^/social-service': '' }, // Remove o prefixo /auth-service
     changeOrigin: true,
     logger: console,
@@ -106,9 +106,9 @@ app.use('/movie-service', createProxyMiddleware({
     },
 }));
 
-app.use('/emotion-service', createProxyMiddleware({
-    target: process.env.EMOTION_SERVICE_URL, 
-    pathRewrite: { '^/emotion-service': '' }, 
+app.use('/emotion-analysis-service', createProxyMiddleware({
+    target: process.env.EMOTION_ANALYSIS_SERVICE_URL,
+    pathRewrite: { '^/emotion-analysis-service': '' },
     changeOrigin: true,
     logger: console,
     on: {
