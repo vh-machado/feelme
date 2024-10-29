@@ -22,7 +22,7 @@
           </template>
         </UHorizontalNavigation>
         
-        <UserDropdown :user-nickname="user.nickname"/>
+        <UserDropdown :user-id="user.id" :user-nickname="user.nickname"/>
         
         <div class="hidden lg:flex w-full">
           <UButton v-if="route.name !== 'reviews-new'" color="green" to="/reviews/new" icon="i-mingcute:quill-pen-ai-fill" :ui="{ rounded: 'rounded-e rounded-s-3xl' } ">

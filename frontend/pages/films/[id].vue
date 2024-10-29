@@ -35,7 +35,7 @@
         </div>
 
         <div class="flex flex-col gap-4 w-full">
-          <p v-if="movieDetails.tagline" class="italic text-gray-500">{{ movieDetails.tagline.toUpperCase() }}</p>
+          <p v-if="movieDetails.tagline" class="italic text-stone-400">"{{ movieDetails.tagline.toUpperCase() }}"</p>
           
           <p class="text-sm lg:text-base">{{ movieDetails.overview }}</p>
 

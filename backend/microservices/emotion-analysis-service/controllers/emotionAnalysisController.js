@@ -1,6 +1,6 @@
 const { runGemini } = require("../utils/gemini.js");
 const EmotionAnalysis = require("../models/emotionAnalysis.js");
-const Review = require("../models/review");
+const Review = require("../models/review.model.js");
 const { formatEmojiEmotion } = require("../utils/formatEmojiEmotion.js");
 
 let requestQueue = [];
@@ -98,8 +98,6 @@ async function deleteEmotionAnalysisById(req, res) {
   }
 }
 
-
-
 async function getAllEmotionAnalysisByUserId(req, res) {
   const { userId } = req.params;
 
@@ -117,16 +115,34 @@ async function getAllEmotionAnalysisByUserId(req, res) {
     const userAnalyses = analyses.filter(
       (analysis) => analysis.reviewId && analysis.reviewId.userMovieId
     ).map((analysis) => ({
-      _id: analysis._id,
-      reviewId: analysis.reviewId,
       emotions: analysis.emotions,
     }));
 
-    if (!userAnalyses.length) {
-      return res.status(404).json({ error: "Nenhuma análise encontrada para o usuário." });
+    const computedEmotions = []
+
+    for (const analysis of userAnalyses) {
+      for (const emotion of analysis.emotions) {
+        let foundEmotion = computedEmotions.find(e => e.description === emotion.description )
+        let index = computedEmotions.indexOf(foundEmotion)
+
+        if(foundEmotion) {
+          let counter = foundEmotion.counter + 1
+          computedEmotions[index] = {
+            emoji: foundEmotion.emoji,
+            description: foundEmotion.description,
+            counter
+          }
+        } else {
+          computedEmotions.push({
+            description: emotion.description,
+            emoji: emotion.emoji,
+            counter: 1
+          })
+        }
+      }
     }
 
-    res.status(200).json(userAnalyses);
+    res.status(200).json(computedEmotions);
   } catch (error) {
     console.error("Erro ao buscar análises do usuário:", error.message);
     res.status(500).json({ error: "Erro ao buscar análises do usuário." });

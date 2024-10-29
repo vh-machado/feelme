@@ -5,6 +5,40 @@ const UserMovie = require("../models/userMovie.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
 
+exports.getAllMoviesByUser = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const userMovies = await UserMovie.find({ userId: userId });
+
+    const movieIds = userMovies.map(userMovie => userMovie.movieId);
+
+    const token = req.header('x-auth-token');
+
+    const movies = []
+    for(const movieId of movieIds) {
+      const movieServiceUrl = `${process.env.MOVIE_SERVICE_URL}/api/movie/${movieId}`
+  
+      await axios.get(movieServiceUrl, {
+        headers: {
+          'x-auth-token': token,
+          accept: 'application/json'
+        }
+      }).then(({ data: movieResponse }) => movies.push({
+        id: movieResponse.data.id,
+        title: movieResponse.data.title,
+        posterPath: movieResponse.data.poster_path,
+      } ))
+    }
+
+    res.status(200).json(movies);
+  } catch (err) {
+    console.error("Erro ao buscar filmes do user:", err.message);
+    res.status(500).send("Erro ao buscar filmes");
+  }
+
+}
+
 exports.getAllUserReviews = async (req, res) => {
 
   const { userId } = req.params;
