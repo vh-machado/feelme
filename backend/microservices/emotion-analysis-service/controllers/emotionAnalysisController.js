@@ -97,18 +97,38 @@ async function deleteEmotionAnalysisById(req, res) {
   }
 }
 
+const EmotionAnalysis = require("../models/emotionAnalysis");
+const Review = require("../models/review");
+
 async function getAllEmotionAnalysisByUserId(req, res) {
   const { userId } = req.params;
 
   try {
-    const analyses = await EmotionAnalysis.find({ userId });
-    if (!analyses.length) return res.status(404).json({ error: "Nenhuma análise encontrada para o usuário." });
+    const analyses = await EmotionAnalysis.find()
+      .populate({
+        path: "reviewId",
+        populate: {
+          path: "userMovieId",
+          match: { userId },
+        },
+      })
+      .lean();
 
-    res.status(200).json(analyses);
+
+    const userAnalyses = analyses.filter(
+      (analysis) => analysis.reviewId && analysis.reviewId.userMovieId
+    );
+
+    if (!userAnalyses.length) {
+      return res.status(404).json({ error: "Nenhuma análise encontrada para o usuário." });
+    }
+
+    res.status(200).json(userAnalyses);
   } catch (error) {
     console.error("Erro ao buscar análises do usuário:", error.message);
     res.status(500).json({ error: "Erro ao buscar análises do usuário." });
   }
 }
 
-module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId  };
+module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId 
+};
