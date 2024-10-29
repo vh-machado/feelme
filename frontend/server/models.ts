@@ -26,6 +26,13 @@ export interface Emotion {
   emoji: string
   description: string
 }
+
+export interface EmotionCounter {
+  emoji: string
+  description: string
+  counter: number
+}
+
 export interface Review {
   _id: string
   userMovie: UserMovie
