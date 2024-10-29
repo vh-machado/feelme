@@ -114,10 +114,13 @@ async function getAllEmotionAnalysisByUserId(req, res) {
       })
       .lean();
 
-
     const userAnalyses = analyses.filter(
       (analysis) => analysis.reviewId && analysis.reviewId.userMovieId
-    );
+    ).map((analysis) => ({
+      _id: analysis._id,
+      reviewId: analysis.reviewId,
+      emotions: analysis.emotions,
+    }));
 
     if (!userAnalyses.length) {
       return res.status(404).json({ error: "Nenhuma análise encontrada para o usuário." });
@@ -129,6 +132,7 @@ async function getAllEmotionAnalysisByUserId(req, res) {
     res.status(500).json({ error: "Erro ao buscar análises do usuário." });
   }
 }
+
 
 module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId 
 };
