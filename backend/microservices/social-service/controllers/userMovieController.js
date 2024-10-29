@@ -143,3 +143,15 @@ exports.deleteUserMovie = async (req, res) => {
     res.status(500).send("Erro no servidor");
   }
 };
+
+exports.checkUserMovie = async (req, res) => {
+  const { userId, movieId } = req.params;
+
+  try {
+    const userMovie = await UserMovie.findOne({ userId, movieId });
+    res.status(200).json({ exists: !!userMovie });
+  } catch (err) {
+    console.error("Erro ao verificar UserMovie:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
