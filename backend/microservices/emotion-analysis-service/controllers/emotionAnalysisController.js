@@ -1,5 +1,6 @@
 const { runGemini } = require("../utils/gemini.js");
 const EmotionAnalysis = require("../models/emotionAnalysis.js");
+const Review = require("../models/review");
 const { formatEmojiEmotion } = require("../utils/formatEmojiEmotion.js");
 
 let requestQueue = [];
@@ -97,8 +98,7 @@ async function deleteEmotionAnalysisById(req, res) {
   }
 }
 
-const EmotionAnalysis = require("../models/emotionAnalysis");
-const Review = require("../models/review");
+
 
 async function getAllEmotionAnalysisByUserId(req, res) {
   const { userId } = req.params;
