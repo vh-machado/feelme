@@ -74,7 +74,7 @@ exports.getReviewsByUserId = async (req, res) => {
       })
       .exec();
 
-    // Filtra reviews que estão associados ao userId desejado
+
     const userReviews = reviews.filter(review => review.userMovieId);
 
     const reviewWithDetails = [];
