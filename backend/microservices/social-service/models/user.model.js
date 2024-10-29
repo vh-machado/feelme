@@ -8,6 +8,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  followers:{
+    type: Number,
+    required: false,
+    default: 0,
+  },
   email: {
     type: String,
     required: true,

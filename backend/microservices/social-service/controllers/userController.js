@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 
 exports.getUsers = async (req, res) => {
   try {
-    const user = await User.find(); 
+    const user = await User.find();
     res.status(200).json(user);
   } catch (err) {
     console.error("Erro ao buscar User:", err.message);
@@ -13,7 +13,7 @@ exports.getUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await User.findById(id); 
+    const user = await User.findById(id);
     res.status(200).json(user);
   } catch (err) {
     console.error("Erro ao buscar User:", err.message);
@@ -85,6 +85,32 @@ exports.deleteUser = async (req, res) => {
     res.status(200).json({ msg: "Usuário deletado com sucesso" });
   } catch (err) {
     console.error("Erro ao deletar Usuário:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
+
+exports.getSearchUser = async (req, res) => {
+  const { query } = req.query; 
+
+  try {
+
+    if (!query) {
+      return res.status(400).json({ msg: "O parâmetro 'query' é obrigatório." });
+    }
+
+
+    const regex = new RegExp(query, "i"); 
+
+    const users = await User.find({
+      $or: [
+        { name: { $regex: regex } },      
+        { nickname: { $regex: regex } }  
+      ]
+    });
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Erro ao buscar usuário:", err.message);
     res.status(500).send("Erro no servidor");
   }
 };
