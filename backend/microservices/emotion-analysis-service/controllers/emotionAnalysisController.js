@@ -97,4 +97,18 @@ async function deleteEmotionAnalysisById(req, res) {
   }
 }
 
-module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById };
+async function getAllEmotionAnalysisByUserId(req, res) {
+  const { userId } = req.params;
+
+  try {
+    const analyses = await EmotionAnalysis.find({ userId });
+    if (!analyses.length) return res.status(404).json({ error: "Nenhuma análise encontrada para o usuário." });
+
+    res.status(200).json(analyses);
+  } catch (error) {
+    console.error("Erro ao buscar análises do usuário:", error.message);
+    res.status(500).json({ error: "Erro ao buscar análises do usuário." });
+  }
+}
+
+module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId  };
