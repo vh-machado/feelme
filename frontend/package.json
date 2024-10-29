@@ -27,5 +27,8 @@
     "pinia": "^2.2.2",
     "vue": "latest",
     "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "nuxt-anchorscroll": "^1.0.3"
   }
 }

@@ -1,15 +1,19 @@
 <template>
-  <div class="flex flex-col md:flex-row h-full justify-center gap-4">
+  <div class="flex flex-col md:flex-row h-full justify-center gap-4 overflow-y-auto">
     <div class="flex w-full flex-col justify-center items-center gap-4">
-      <div class="font-k2d font-bold text-5xl">
-        Feel<span class="text-indigo-300">me</span>
+      <div class="flex gap-4 items-center font-k2d font-bold text-5xl">
+        <img src="/assets/feelme-logo.png" class="h-8">
+
+        <span>
+          Feel<span class="text-indigo-300">me</span>
+        </span>
       </div>
     </div>
 
     <UDivider orientation="vertical" :ui="{ border: { base: 'border-slate-600 dark:border-slate-600'} }" />
 
-    <div class="flex w-full flex-col justify-center items-center gap-4 py-4 pe-4">
-      <div v-if="formMode === 'none'" class="flex w-1/2 flex-col justify-center items-center gap-4">
+    <div class="flex w-full flex-col justify-start items-center gap-4 py-10 overflow-y-auto">
+      <div v-if="formMode === 'none'" class="flex w-1/2 h-full flex-col justify-center items-center gap-4">
         <UButton block type="button" color="green" size="lg" class="font-semibold" @click="formMode = 'register'">
           Começar agora
         </UButton>
@@ -19,13 +23,13 @@
         </UButton>
       </div>
         
-      <UForm v-if="formMode === 'login'" :schema="loginSchema" :state="loginState" class="w-1/2 space-y-4" @submit="login">
+      <UForm v-if="formMode === 'login'" :schema="loginSchema" :state="loginState" class="flex flex-col h-full justify-center px-3 py-8 w-full lg:w-3/4 space-y-4" @submit="login">
         <UFormGroup label="E-mail" name="email">
-          <UInput v-model="loginState.email" placeholder="E-mail de usuário" size="xl" icon="i-mingcute-at-line" />
+          <UInput v-model="loginState.email" class="w-full" placeholder="E-mail de usuário" size="xl" icon="i-mingcute-at-line" />
         </UFormGroup>
 
         <UFormGroup label="Senha" name="password">
-          <UInput v-model="loginState.password" placeholder="Senha" type="password" size="xl" icon="i-mingcute-lock-line" />
+          <UInput v-model="loginState.password" class="w-full" placeholder="Senha" type="password" size="xl" icon="i-mingcute-lock-line" />
         </UFormGroup>
 
         <UButton block type="submit" color="green" size="lg" class="font-semibold">
@@ -37,25 +41,25 @@
         </UButton>
       </UForm>
 
-      <UForm v-if="formMode === 'register'" :schema="registerSchema" :state="registerState" class="w-1/2 space-y-4" @submit="register">
+      <UForm v-if="formMode === 'register'" :schema="registerSchema" :state="registerState" class="flex flex-col w-full gap-6 lg:w-3/4 px-3" @submit="register">
         <UFormGroup label="Nome" name="name">
-          <UInput v-model="registerState.name" placeholder="Seu nome" size="xl" icon="i-mingcute-user-3-fill" />
+          <UInput v-model="registerState.name" class="w-full" placeholder="Seu nome" size="xl" icon="i-mingcute-user-3-fill" />
         </UFormGroup>
 
         <UFormGroup label="Nickname" name="nickname">
-          <UInput v-model="registerState.nickname" placeholder="Seu apelido" size="xl" icon="i-mingcute-happy-fill" />
+          <UInput v-model="registerState.nickname" class="w-full" placeholder="Seu apelido" size="xl" icon="i-mingcute-happy-fill" />
         </UFormGroup>
 
         <UFormGroup label="E-mail" name="email">
-          <UInput v-model="registerState.email" placeholder="E-mail de usuário" size="xl" icon="i-mingcute-at-line" />
+          <UInput v-model="registerState.email" class="w-full" placeholder="E-mail de usuário" size="xl" icon="i-mingcute-at-line" />
         </UFormGroup>
 
         <UFormGroup label="Senha" name="password">
-          <UInput v-model="registerState.password" placeholder="Senha" type="password" size="xl" icon="i-mingcute-lock-line" />
+          <UInput v-model="registerState.password" class="w-full" placeholder="Senha" type="password" size="xl" icon="i-mingcute-lock-line" />
         </UFormGroup>
 
         <UFormGroup label="Confirmar senha" name="passwordConfirmation">
-          <UInput v-model="registerState.passwordConfirmation" placeholder="Confirmar senha" type="password" size="xl" icon="i-mingcute-lock-line" />
+          <UInput v-model="registerState.passwordConfirmation" class="w-full" placeholder="Confirmar senha" type="password" size="xl" icon="i-mingcute-lock-line" />
         </UFormGroup>
 
         <UButton block type="submit" color="green" size="lg" class="font-semibold">

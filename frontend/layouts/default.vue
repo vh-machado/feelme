@@ -2,7 +2,9 @@
   <div>
     <AppHeader />
 
-    <slot />
+    <div class="flex w-full justify-center">
+      <slot />
+    </div>
   </div>
 </template>
 

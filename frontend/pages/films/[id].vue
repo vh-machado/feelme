@@ -59,7 +59,7 @@
         <img 
           :src="movieDetails.posterUrl" 
           alt="Poster do Filme" 
-          class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700 shadow-xl" 
+          class="w-[230px] h-[345px] object-cover object-center rounded-lg border-[1px] border-neutral-600 shadow-xl" 
         >
 
         <UButton block :to="`/reviews/new?movie=${route.params.id}`" color="indigo" size="lg" class="font-semibold" icon="i-mingcute:quill-pen-ai-fill">
