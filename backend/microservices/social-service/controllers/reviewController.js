@@ -62,6 +62,36 @@ async function setReviewTextEmotions(req, review) {
   }
 }
 
+exports.getReviewsByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const reviews = await Review.find()
+      .populate({
+        path: "userMovieId",
+        match: { userId },
+        populate: { path: "userId", select: "name nickname email" }
+      })
+      .exec();
+
+    // Filtra reviews que estão associados ao userId desejado
+    const userReviews = reviews.filter(review => review.userMovieId);
+
+    const reviewWithDetails = [];
+    for (const review of userReviews) {
+      let reviewDetailed = await getReviewWithMovieDetails(req, review);
+      reviewDetailed['emotions'] = await getReviewTextEmotions(req, review._id);
+      reviewWithDetails.push(reviewDetailed);
+    }
+
+    res.status(200).json(reviewWithDetails);
+  } catch (err) {
+    console.error("Erro ao buscar Critícas do usuário:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
+
+
 async function getReviewTextEmotions(req, reviewId) {
   const token = req.header('x-auth-token');
   const emotionServiceUrl = `${process.env.EMOTION_ANALYSIS_SERVICE_URL}/api/emotion-analysis/review/${reviewId}`
