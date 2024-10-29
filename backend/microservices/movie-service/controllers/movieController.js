@@ -312,7 +312,9 @@ async function getKeywordsByMovieIds(movieIds) {
         },
       });
 
-      response.data.keywords.forEach(keyword => allKeywords.add(keyword.name));
+  
+
+      response.data.keywords.forEach(keyword => allKeywords.add(keyword.id));
     } catch (error) {
       console.error(`Erro ao buscar keywords para o filme ${movieId}:`, error.message);
       throw error;
