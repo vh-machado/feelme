@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const UserFollowers = require("../models/userFollowers.model");
+const Review = require("../models/review.model");
 
 exports.getAllUserFollowers = async (req, res) => {
   try {
@@ -44,6 +45,11 @@ exports.createUserFollower = async (req, res) => {
       return res.status(404).json({ msg: "Usuário que está seguindo não encontrado" });
     }
 
+    const existingFollower = await UserFollowers.findOne({ userIdFrom, userIdTo });
+    if (existingFollower) {
+      return res.status(400).json({ msg: "Usuário já está seguindo este usuário." });
+    }
+
     const userFollower = new UserFollowers({ userIdFrom, userIdTo });
     await userFollower.save();
     await updateFollowersCount(userIdTo);
@@ -54,6 +60,7 @@ exports.createUserFollower = async (req, res) => {
     res.status(500).send("Erro no servidor");
   }
 };
+
 
 exports.deleteUserFollower = async (req, res) => {
   const { id } = req.params;
@@ -92,3 +99,25 @@ async function updateFollowersCount(userId) {
   const count = await UserFollowers.countDocuments({ userIdTo: userId });
   await User.findByIdAndUpdate(userId, { followers: count });
 }
+
+exports.getReviewsFromFollowedUsers = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const followedUsers = await UserFollowers.find({ userIdFrom: userId })
+      .select("userIdTo") 
+      .populate("userIdTo"); 
+
+    console.log("followedUsers " + followedUsers)
+
+    const followedUserIds = followedUsers.map(follower => follower.userIdTo._id); 
+    console.log("followedUserIds " + followedUserIds)
+    const reviews = await Review.find({ userMovieId: { $in: followedUserIds } })
+      .sort({ loggedAt: -1 }) 
+      .populate("userMovieId"); 
+      console.log("reviews " + reviews)
+    res.status(200).json(reviews);
+  } catch (err) {
+    console.error("Erro ao buscar reviews dos usuários seguidos:", err.message);
+    res.status(500).send("Erro no servidor");
+  }
+};
