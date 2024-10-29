@@ -118,24 +118,27 @@ async function getReviewTextEmotions(req, reviewId) {
 
 exports.getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find().populate({
-      path: "userMovieId",
-      populate: { path: "userId", select: "name nickname email" }
-    });
+    const reviews = await Review.find()
+      .populate({
+        path: "userMovieId",
+        populate: { path: "userId", select: "name nickname email" }
+      })
+      .sort({ loggedAt: -1 }); 
 
-    const reviewWithMovieDetails = []
+    const reviewWithMovieDetails = [];
 
     for (const review of reviews) {
-      let reviewDetailed = await getReviewWithMovieDetails(req, review)
-      reviewDetailed['emotions'] = await getReviewTextEmotions(req, review._id)
-      reviewWithMovieDetails.push(reviewDetailed)
+      let reviewDetailed = await getReviewWithMovieDetails(req, review);
+      reviewDetailed['emotions'] = await getReviewTextEmotions(req, review._id);
+      reviewWithMovieDetails.push(reviewDetailed);
     }
     res.status(200).json(reviewWithMovieDetails);
   } catch (err) {
-    console.error("Erro ao buscar Critícas:", err.message);
+    console.error("Erro ao buscar Críticas:", err.message);
     res.status(500).send("Erro no servidor");
   }
 };
+
 
 exports.getReviewById = async (req, res) => {
   const { id } = req.params;
