@@ -70,7 +70,7 @@ const toast = useToast()
 const reviews = ref<Review[]>([])
 const emotions = ref<EmotionCounter[]>([])
 
-const { status } = await useSocialService('reviews', {
+const { status } = await useSocialService(`reviews/user/${user.value.id}`, {
   method: 'GET',
   onResponse({ response }) {
     if(response.status === 200) {
