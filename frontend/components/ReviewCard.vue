@@ -3,7 +3,7 @@
     <div class="flex gap-2 items-center font-bold">
       <UAvatar
         :ui="{ wrapper: 'ring-[1px] ring-neutral-400' }"
-        src="https://avatars.githubusercontent.com/u/73856054?v=4"
+        :src="avatarUri"
         alt="Avatar"
       />
 
@@ -82,6 +82,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useSessionStore } from '~/store/session'
+import { createAvatar } from '@dicebear/core';
+import { notionistsNeutral } from '@dicebear/collection';
 
 const { user } = storeToRefs(useSessionStore());
 
@@ -96,6 +98,7 @@ const props = defineProps<{
     user: {
       _id: string
       nickname: string
+      avatar: string
     }
     movie: {
       id: number
@@ -113,6 +116,21 @@ const props = defineProps<{
 
 const likedReview = ref<boolean>(false)
 const likesCount = ref<number>(props.likes)
+
+const avatarUri = ref<string>(generateAvatarUri(props.userMovie.user.avatar))
+
+console.log(avatarUri)
+
+function generateAvatarUri(avatarSeed: string) {
+  const avatar = createAvatar(notionistsNeutral, {
+    seed: avatarSeed,
+    backgroundColor: ["c0aede", "ADB3DE","d1d4f9"]
+  });
+
+  const dataUri = avatar.toDataUri();
+
+  return dataUri
+}
 
 await useSocialService(`userLike/exists/${user.value.id}/${props.id}`, {
   method: 'GET',
