@@ -149,6 +149,45 @@ async function getAllEmotionAnalysisByUserId(req, res) {
   }
 }
 
+async function getMoviesByPositiveEmotions(req, res) {
+  const { userId } = req.params;
 
-module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId 
+  try {
+
+    const analyses = await EmotionAnalysis.find({
+      "emotions.description": { $in: ["Alegria", "Satisfação", "Entusiasmo"] },
+    })
+      .populate({
+        path: "reviewId",
+        populate: {
+          path: "userMovieId",
+          match: { userId },
+          select: "movieId",
+        },
+      })
+      .lean();
+
+
+    const movieIds = analyses
+      .filter(
+        (analysis) => analysis.reviewId && analysis.reviewId.userMovieId
+      )
+      .map((analysis) => analysis.reviewId.userMovieId.movieId);
+
+    // Remove IDs duplicados
+    const uniqueMovieIds = [...new Set(movieIds)];
+
+    if (!uniqueMovieIds.length) {
+      return res.status(404).json({ error: "Nenhum filme encontrado para o usuário com as emoções especificadas." });
+    }
+
+    res.status(200).json(uniqueMovieIds);
+  } catch (error) {
+    console.error("Erro ao buscar filmes por emoções positivas:", error.message);
+    res.status(500).json({ error: "Erro ao buscar filmes por emoções positivas." });
+  }
+}
+
+
+module.exports = { emotionAnalysis, getEmotionAnalysisByReviewId, deleteEmotionAnalysisById, getAllEmotionAnalysisByUserId, getMoviesByPositiveEmotions 
 };

@@ -17,6 +17,7 @@ app.use('', require('./routes/user'));
 app.use('', require('./routes/review'));
 app.use('', require('./routes/userMovie'));
 app.use('', require('./routes/userLike'));
+app.use('', require('./routes/userFollower')); 
 
 
 // Porta do serviço
