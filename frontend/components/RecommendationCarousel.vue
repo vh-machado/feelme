@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full items-center">
+  <div v-if="items.length >= 8" class="flex flex-col w-full items-center">
     <div class="flex w-full lg:w-[950px] gap-3 px-3 lg:px-0 -mb-4">
       <UIcon class="w-5 h-5" name="i-mingcute:sparkles-fill"/>
 
@@ -14,7 +14,7 @@
     </div>
     
     <template v-else>
-      <div v-if="items.length >= 8" class="hidden lg:flex flex-col mx-16 justify-center">
+      <div class="hidden lg:flex flex-col mx-16 justify-center">
         <UCarousel 
           v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-fit justify-self-center', container: 'w-[950px] justify-self-center gap-[10px] py-8' }" 
           arrows
