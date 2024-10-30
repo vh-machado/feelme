@@ -324,28 +324,24 @@ async function getKeywordsByMovieIds(movieIds) {
   return Array.from(allKeywords);
 }
 
-
-exports.discoverMoviesWithoutGenresAndKeywords = async (req, res) => {
+exports.discoverMoviesWithGenresAndKeywords = async (req, res) => {
   const { movieIds, language, page } = req.body;
   const languageParam = language || 'pt-BR';
   const pageParam = page || 1;
 
   try {
-
     const keywords = await getKeywordsByMovieIds(movieIds);
     const genres = await getGenresByMovieIds(movieIds);
 
-
-    const withoutKeywords = keywords.join('|');
-    const withoutGenres = genres.join('|');
-
+    const withKeywords = keywords.join('|');
+    const withGenres = genres.join('|');
 
     const url = `https://api.themoviedb.org/3/discover/movie`;
 
     const response = await axios.get(url, {
       params: {
-        without_keywords: withoutKeywords,
-        without_genres: withoutGenres,
+        with_keywords: withKeywords,
+        with_genres: withGenres,
         language: languageParam,
         page: pageParam,
       },
@@ -355,10 +351,12 @@ exports.discoverMoviesWithoutGenresAndKeywords = async (req, res) => {
       },
     });
 
+    let discoveredMovies = response.data.results.filter(movie => !movieIds.includes(movie.id))
+
     res.status(200).json({
       success: true,
-      message: "Filmes obtidos com exclusão de gêneros e keywords específicos",
-      data: response.data,
+      message: "Filmes obtidos com filtragem de gêneros e keywords específicos",
+      data: discoveredMovies,
     });
   } catch (error) {
     console.error("Erro ao buscar filmes com filtagem de gêneros e keywords:", error.message);

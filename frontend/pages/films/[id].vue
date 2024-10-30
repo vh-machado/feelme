@@ -11,7 +11,13 @@
         <div class="flex gap-3">
           <div class="flex flex-col gap-2 lg:gap-4 w-full">
             <h1 class="text-xl lg:text-2xl font-bold">{{ movieDetails.title }}</h1>
-    
+            
+            <div v-if="watched" class="flex w-fit gap-2 text-xs items-center bg-green-400/20 p-1 pe-2 rounded-lg">
+              <UIcon name="i-mingcute:eye-2-fill" class="w-5 h-5 text-green-400" />
+
+              Já assistido
+            </div>
+
             <div class="flex flex-col lg:flex-row gap-2 lg:gap-5">
               <div class="flex gap-2 text-sm">
                 <UIcon name="i-mingcute:calendar-line" class="w-5 h-5 text-indigo-400" />
@@ -85,6 +91,9 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMovieServiceFetch } from '~/composables/useMovieService';
 
+import { storeToRefs } from 'pinia'
+import { useSessionStore } from '~/store/session'
+
 interface MovieDetails {
   title: string
   overview: string
@@ -100,10 +109,13 @@ interface MovieDetails {
   revenue: number
 }
 
+const { user } = storeToRefs(useSessionStore());
+
 const route = useRoute()
 const movieId = route.params.id
 const config = useRuntimeConfig()
 const movieDetails = ref<MovieDetails | null>(null)
+const watched = ref<boolean>(false)
 
 async function fetchMovieDetails() {
   console.log("Fetching movie details for movie")
@@ -144,6 +156,14 @@ async function fetchMovieDetails() {
         budget: movieData.budget,
         revenue: movieData.revenue
       }
+
+      await useSocialService(`userMovie/check/${user.value.id}/${movieId}`, {
+        method: 'GET',
+        onResponse({ response }) {
+          watched.value = response._data.exists
+        }
+      })
+
       console.log("Movie details loaded")
     } else {
       console.warn("Movie data not found or success is false")

@@ -178,7 +178,7 @@ async function getMoviesByPositiveEmotions(req, res) {
     const uniqueMovieIds = [...new Set(movieIds)];
 
     if (!uniqueMovieIds.length) {
-      return res.status(404).json({ error: "Nenhum filme encontrado para o usuário com as emoções especificadas." });
+      uniqueMovieIds = []
     }
 
     res.status(200).json(uniqueMovieIds);

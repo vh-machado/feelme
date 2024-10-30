@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full items-center">
     <div class="flex w-full lg:w-[950px] gap-3 px-3 lg:px-0 -mb-4">
-      <UIcon class="w-5 h-5" name="i-mingcute:star-topper-fill"/>
+      <UIcon class="w-5 h-5" name="i-mingcute:sparkles-fill"/>
 
-      <span class="font-medium">Popular <span class="text-indigo-300">esta semana</span></span>
+      <span class="font-medium">Recomendações <span class="text-indigo-300">para você</span></span>
     </div>
 
     <div v-if="status === 'pending'" class="flex w-full justify-center justify-self-center items-center gap-[10px] py-8">
@@ -12,9 +12,9 @@
       <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
       <USkeleton class="lg:w-[230px] lg:h-[345px] w-[105px] h-[157.5px]" :ui="{ background: 'dark:bg-[#7588E1]/10' }" />
     </div>
-
+    
     <template v-else>
-      <div class="hidden lg:flex mx-16 justify-center">
+      <div v-if="items.length >= 8" class="hidden lg:flex flex-col mx-16 justify-center">
         <UCarousel 
           v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-fit justify-self-center', container: 'w-[950px] justify-self-center gap-[10px] py-8' }" 
           arrows
@@ -31,19 +31,19 @@
         >
           <ULink :to="`films/${item.id}`">
             <img
-              :src="item.poster_path" draggable="false"
-              class="w-[230px] h-[345px] object-cover object-center rounded border-[1px] border-neutral-700">
+            :src="item.poster_path" draggable="false"
+            class="w-[110px] h-[165px] object-cover object-center rounded border-[1px] border-neutral-700">
           </ULink>
         </UCarousel>
       </div>
-
+      
       <div class="flex lg:hidden justify-center">
         <UCarousel 
-          v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-full justify-self-center', container: 'w-full py-8 pe-3' }" 
+        v-slot="{ item }" :items="items" :ui="{ item: 'snap-start', wrapper: 'w-full justify-self-center', container: 'w-full py-8 pe-3' }" 
         >
           <ULink :to="`films/${item.id}`" class="ml-3">
             <img
-              :src="item.poster_path" draggable="false"
+            :src="item.poster_path" draggable="false"
               class="w-[105px] h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-700">
           </ULink>
         </UCarousel>
@@ -54,36 +54,35 @@
 
 <script setup lang="ts">
 
+import { storeToRefs } from 'pinia'
+import { useSessionStore } from '~/store/session'
+
 interface Movie {
   id: string
   poster_path: string
 }
 
-interface MovieResponse {
-  success: boolean
-  message: string
-  data: {
-    page: number
-    results: Movie[]
-    total_pages: number
-    total_results: number
-  }
-}
+const { user } = storeToRefs(useSessionStore());
 
 const config = useRuntimeConfig()
 
 const items = ref<Movie[]>([])
 
-const { status } = await useMovieService<MovieResponse>('trending/movie/week', {
+const { status } = await useEmotionAnalysisService(`/emotion-analysis/user/${user.value.id}/movies`, {
   method: 'GET',
-  query: { language: 'pt-BR', page: '1' },
-  transform: (response) => {
-    if(response.success){
-      status.value = 'ready'
+  onResponse({ response }) {
+    const movieIds: number[] = response._data
 
-      if (response && response.data.results) {
-        setPosters(response.data.results)
-      }
+    if(movieIds.length > 0) {
+      useMovieService('/movie/discover', {
+        method: 'POST',
+        body: {
+          movieIds
+        },
+        onResponse({ response }) {
+          setPosters(response._data.data)
+        }
+      })
     }
   }
 })
