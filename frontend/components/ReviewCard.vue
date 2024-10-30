@@ -27,12 +27,11 @@
       </div>
     </ULink>
 
-
     <div v-else class="flex gap-4 rounded p-4 bg-gradient bg-gradient-to-b from-[#BBC1DA]/10 to-[#7588E1]/10">
-      <ULink :to="`/films/${userMovie.movie.id}`">
+      <ULink :to="`/films/${userMovie.movie.id}`" class="flex shrink-0">
         <img 
           :src="`${config.public.tmdbImageBaseUrl}/w500${userMovie.movie.posterPath}`" draggable="false"
-          class="w-[70px] lg:w-[105px] h-[105px] lg:h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
+          class="flex w-[70px] lg:w-[105px] h-[105px] lg:h-[157.5px] object-cover object-center rounded border-[1px] border-neutral-400 shadow-2xl"
         >
       </ULink>
       
@@ -118,8 +117,6 @@ const likedReview = ref<boolean>(false)
 const likesCount = ref<number>(props.likes)
 
 const avatarUri = ref<string>(generateAvatarUri(props.userMovie.user.avatar))
-
-console.log(avatarUri)
 
 function generateAvatarUri(avatarSeed: string) {
   const avatar = createAvatar(notionistsNeutral, {

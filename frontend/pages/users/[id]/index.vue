@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-10 w-full md:w-[950px] justify-self-center px-4 py-8 md:px-0">
-    <div v-if="userStatus !== 'pending'" class="flex lg:flex-row lg:justify-between gap-5 items-start">
+    <div v-if="userStatus !== 'pending'" class="flex flex-col lg:flex-row lg:justify-between gap-5 items-start">
       <div class="flex items-center gap-5">
         <UAvatar
           size="3xl"
@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <UButton :to="`/users/${route.params.id}/edit`" color="indigo" label="Editar" icon="i-mingcute:edit-2-fill"/>
+      <UButton class="self-end lg:self-start" :to="`/users/${route.params.id}/edit`" color="indigo" label="Editar" icon="i-mingcute:edit-2-fill"/>
     </div>
 
     <div class="flex flex-wrap w-full gap-3">
