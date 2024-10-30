@@ -2,9 +2,11 @@ export interface User {
   _id: string
   name: string
   nickname: string
-  email: string
-  password: string
-  userRole: string
+  email?: string
+  password?: string
+  userRole?: string
+  avatar: string
+  followers: number
 }
 
 export interface Movie {

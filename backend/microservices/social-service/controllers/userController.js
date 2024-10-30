@@ -46,8 +46,9 @@ exports.saveUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, nickname, email, password } = req.body;
-  if (!name && !nickname && !email && !password) {
+  const updateFields = req.body;
+
+  if (!Object.keys(updateFields).length) {
     return res.status(400).json({ msg: "Pelo menos um campo deve ser atualizado" });
   }
 
@@ -57,11 +58,10 @@ exports.updateUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: "Usuário não encontrado" });
     }
-
-    user.name = name || user.name;
-    user.nickname = nickname || user.nickname;
-    user.email = email || user.email;
-    user.password = password || user.password;
+    
+    Object.keys(updateFields).forEach((key) => {
+      user[key] = updateFields[key];
+    });
 
     await user.save();
     res.status(200).json(user);
@@ -70,6 +70,7 @@ exports.updateUser = async (req, res) => {
     res.status(500).send("Erro no servidor");
   }
 };
+
 
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
