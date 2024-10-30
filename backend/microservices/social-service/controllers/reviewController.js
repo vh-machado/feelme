@@ -37,7 +37,8 @@ async function getReviewWithMovieDetails(req, review) {
         _id: review.userMovieId.userId._id,
         name: review.userMovieId.userId.name,
         nickname: review.userMovieId.userId.nickname,
-        email: review.userMovieId.userId.email
+        email: review.userMovieId.userId.email,
+        avatar: review.userMovieId.userId.avatar
       },
     },
   }
@@ -70,7 +71,7 @@ exports.getReviewsByUserId = async (req, res) => {
       .populate({
         path: "userMovieId",
         match: { userId },
-        populate: { path: "userId", select: "name nickname email" }
+        populate: { path: "userId", select: "name nickname email avatar" }
       })
       .exec();
 
@@ -121,7 +122,7 @@ exports.getReviews = async (req, res) => {
     const reviews = await Review.find()
       .populate({
         path: "userMovieId",
-        populate: { path: "userId", select: "name nickname email" }
+        populate: { path: "userId", select: "name nickname email avatar" }
       })
       .sort({ loggedAt: -1 }); 
 
@@ -146,7 +147,7 @@ exports.getReviewById = async (req, res) => {
   try {
     const review = await Review.findById(id).populate({
       path: "userMovieId",
-      populate: { path: "userId", select: "name nickname email" }
+      populate: { path: "userId", select: "name nickname email avatar" }
     });
 
     let reviewWithMovieDetails = await getReviewWithMovieDetails(req, review)
