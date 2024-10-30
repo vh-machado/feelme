@@ -38,7 +38,7 @@
             </span>
           </div>
           
-          <span class="text-xs lg:text-sm break-all">
+          <span class="text-xs lg:text-sm">
             {{ movie.overview }}
           </span>
         </div>

@@ -21,7 +21,7 @@
           {{ userMovie.movie.title }}
         </div>
         
-        <span class="text-xs lg:text-base break-all">
+        <span class="text-xs lg:text-base">
           {{ text }}
         </span>
       </div>
@@ -41,7 +41,7 @@
           {{ userMovie.movie.title }}
         </div>
         
-        <span class="text-xs lg:text-base break-all">
+        <span class="text-xs lg:text-base">
           {{ text }}
         </span>
       </div>
