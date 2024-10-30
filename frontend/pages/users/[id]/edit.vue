@@ -28,6 +28,8 @@
         </div>
         
         <UButton block type="submit" color="green">Salvar</UButton>
+
+        <UButton block type="button" color="gray" @click="navigateTo(`/users/${route.params.id}`)">Cancelar</UButton>
       </form>
     </div>
   </div>
