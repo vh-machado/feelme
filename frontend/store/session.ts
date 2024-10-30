@@ -6,6 +6,7 @@ interface UserSessionInterface {
   name: string
   nickname: string
   userRole: string
+  avatar: string
 }
 
 export const useSessionStore = defineStore('session', {
@@ -22,6 +23,7 @@ export const useSessionStore = defineStore('session', {
       this.user = {
         id: decodedData?.user.id,
         name: decodedData?.user.name,
+        avatar: 'Leo',
         nickname: decodedData?.user.nickname,
         userRole: decodedData?.user.userRole
       }
